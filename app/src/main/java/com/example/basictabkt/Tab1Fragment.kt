@@ -1,10 +1,8 @@
 package com.example.basictabkt
 
-import com.example.basictabkt.R
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import androidx.fragment.app.Fragment
