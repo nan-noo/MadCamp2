@@ -1,5 +1,6 @@
 package com.example.basictabkt
 
+import com.example.basictabkt.R
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -126,6 +127,7 @@ class Tab1Fragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_tab1, container, false)
 
 
+
         //MainActivity 돌아올때마다 메세지 나옴
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(context!!.applicationContext, "연락처 열람권한 있음", Toast.LENGTH_SHORT).show()
@@ -145,9 +147,9 @@ class Tab1Fragment : Fragment() {
             }
 
         }
-        val v = inflater.inflate(R.layout.fragment_tab2, container, false)
+//        val v = inflater.inflate(R.layout.fragment_tab1, container, false)
 
-        val mRecyclerView = v.findViewById(R.id.recyclerview_main_list) as RecyclerView
+        val mRecyclerView = view.findViewById(R.id.recyclerview_main_list) as RecyclerView
         val mLinearLayoutManager = LinearLayoutManager(context!!)
         mRecyclerView.layoutManager = mLinearLayoutManager
 
