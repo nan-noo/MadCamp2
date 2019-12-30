@@ -1,5 +1,6 @@
 package com.example.basictabkt
 
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -21,10 +22,7 @@ import java.util.LinkedHashSet
 
 class Tab1Fragment : Fragment() {
 
-    init{
-        instance = activity?.this
-
-    }
+    var activityInstance: Activity? = null
 
     class ContactItem : Serializable {
         var user_phNumber: String? = null
@@ -68,7 +66,7 @@ class Tab1Fragment : Fragment() {
 //            val contentResolver = Application().applicationContext.contentResolver
 //            val cursor = contentResolver.query(uri, projection, null,
 //                selectionArgs, sortOrder)
-            val cursor = context().contentResolver.query(uri, projection, null,
+            val cursor = context(activityInstance).contentResolver.query(uri, projection, null,
                 selectionArgs, sortOrder)
 
 
@@ -113,12 +111,17 @@ class Tab1Fragment : Fragment() {
     private var count = -1
 //    private val contactlist = contactList
 
+    override fun onAttach(activity: Activity) {
+        super.onAttach(activity)
+        activityInstance = activity
+    }
+    //    val activityInstanceVal = activityInstance!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         //권한이 부여되어 있는지 확인
-        val permissionCheck = ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
+        val permissionCheck = ContextCompat.checkSelfPermission(context!!, android.Manifest.permission.READ_CONTACTS)
 
         val view = inflater.inflate(R.layout.fragment_tab1, container, false)
 
@@ -133,25 +136,25 @@ class Tab1Fragment : Fragment() {
             //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
             //단, 사용자가 "Don't ask again"을 체크한 경우
             //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_CONTACTS)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activityInstance!!, android.Manifest.permission.READ_CONTACTS)) {
                 //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
                 Toast.makeText(context!!.applicationContext, "연락처 권한이 필요합니다", Toast.LENGTH_SHORT).show()
-                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_CONTACTS), READ_CONTACTS_PERMISSION)
+                ActivityCompat.requestPermissions(activityInstance!!, arrayOf(android.Manifest.permission.READ_CONTACTS), READ_CONTACTS_PERMISSION)
             } else {
-                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_CONTACTS), READ_CONTACTS_PERMISSION)
+                ActivityCompat.requestPermissions(activityInstance!!, arrayOf(android.Manifest.permission.READ_CONTACTS), READ_CONTACTS_PERMISSION)
             }
 
         }
         val v = inflater.inflate(R.layout.fragment_tab2, container, false)
 
         val mRecyclerView = v.findViewById(R.id.recyclerview_main_list) as RecyclerView
-        val mLinearLayoutManager = LinearLayoutManager(this)
+        val mLinearLayoutManager = LinearLayoutManager(context!!)
         mRecyclerView.layoutManager = mLinearLayoutManager
 
 
 //        mArrayList = ArrayList()
         mArrayList = contactList
-
+//helloeoeo
 
         mAdapter = CustomAdapter(mArrayList)
         mRecyclerView.adapter = mAdapter
@@ -184,8 +187,8 @@ class Tab1Fragment : Fragment() {
         internal val READ_CONTACTS_PERMISSION = 1
         private var instance: MainActivity? = null
 
-        fun context() : Context {
-            return instance!!.applicationContext
+        fun context(activity: Activity?) : Context {
+            return activity!!.applicationContext
         }
     }
 
