@@ -6,30 +6,33 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:context=".MainActivity">
 
-<com.google.android.material.appbar.AppBarLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:theme="@style/AppTheme.AppBarOverlay">
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="82dp"
-        android:layout_height="39dp"
-        android:gravity="center"
-        android:minHeight="?actionBarSize"
-        android:padding="10dp"
-        android:text="Project1"
-
-        android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
-        android:textSize="12sp"
-        android:textStyle="bold" />
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabs"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary" />
-</com.google.android.material.appbar.AppBarLayout>
+        android:background="#202020"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="82dp"
+            android:layout_height="39dp"
+            android:background="#202020"
+            android:gravity="center"
+            android:minHeight="?actionBarSize"
+            android:padding="10dp"
+
+            android:text="Project1"
+            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#202020" />
+    </com.google.android.material.appbar.AppBarLayout>
 
 <androidx.viewpager.widget.ViewPager
     android:id="@+id/view_pager"
