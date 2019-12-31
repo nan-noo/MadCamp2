@@ -9,18 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.app.Activity
-
-
-
-
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [Tab1Fragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [Tab1Fragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+import android.content.Intent
 
 
 class Tab2Fragment : Fragment() {
@@ -54,7 +43,8 @@ class Tab2Fragment : Fragment() {
             R.drawable.c,
             R.drawable.e,
             R.drawable.j,
-            R.drawable.q
+            R.drawable.q,
+            R.drawable.c
         ) // drawable 폴더에서 가져온 이미지
 
         // 커스텀 아답타 생성
@@ -67,14 +57,16 @@ class Tab2Fragment : Fragment() {
         val gv = view.findViewById<GridView>(R.id.gridView1)
         gv.adapter = adapter  // 커스텀 아답타를 GridView 에 적용
 
-        val tv = view.findViewById<TextView>(R.id.textView1)
-
         // GridView 아이템을 클릭하면 상단 텍스트뷰에 position 출력
         // JAVA8 에 등장한 lambda expression 으로 구현했습니다. 코드가 많이 간결해지네요
         gv.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                val positiontext = position + 1 // position 1 부터 시작!!
-                tv.text = "position : $positiontext"
+                // FullScreen
+                // Sending image id to FullScreenActivity
+                val i = Intent(context!!.applicationContext, FullImageActivity::class.java)
+                // passing array index
+                i.putExtra("id", position)
+                startActivity(i)
             }
         return view
     } // end of onCreate
@@ -101,7 +93,7 @@ internal class MyAdapter(var context: Context, var layout: Int, var img: IntArra
             convertView = inf.inflate(layout, null)
         val iv = convertView!!.findViewById(R.id.imageView1) as ImageView
         iv.setImageResource(img[position])
-
+        iv.scaleType = ImageView.ScaleType.CENTER_CROP
         return convertView
     }
 }
