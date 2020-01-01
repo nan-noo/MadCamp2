@@ -1,15 +1,20 @@
 package com.example.basictabkt
 
+import android.os.Build
 import android.os.Build.VERSION_CODES.M
 import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.core.os.postDelayed
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_tab3.*
 
@@ -19,6 +24,7 @@ class Tab3Fragment : Fragment() {
     private var pauseOffset: Long = 0
     private var running: Boolean = false
 
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,7 +39,8 @@ class Tab3Fragment : Fragment() {
         var elementsArray:ArrayList<String> = arrayListOf()
         val adapter = ArrayAdapter<String>(context!!, android.R.layout.simple_list_item_1, elementsArray)
         val listView = view.findViewById(R.id.recList) as ListView
-
+        val linButtonView = view.findViewById(R.id.linButtons) as ViewGroup
+        val autoTransition = AutoTransition()
         listView.adapter = adapter
 
 
@@ -94,6 +101,10 @@ class Tab3Fragment : Fragment() {
         button2.setOnClickListener{
             elementsArray.add(String.format("%s%s", minsec.text, milli.text))
             adapter.notifyDataSetChanged()
+            autoTransition.duration = 200
+            TransitionManager.beginDelayedTransition(listView)
+            TransitionManager.beginDelayedTransition(linButtonView, autoTransition)
+            listView.visibility = View.VISIBLE
         }
 
         val button3 = view.findViewById(R.id.reset) as Button
@@ -112,6 +123,10 @@ class Tab3Fragment : Fragment() {
                 button1.setText("Start")
                 elementsArray.clear()
                 adapter.notifyDataSetChanged()
+                autoTransition.duration = 100
+                TransitionManager.beginDelayedTransition(listView, autoTransition)
+                TransitionManager.beginDelayedTransition(linButtonView)
+                listView.visibility = View.GONE
                 running = false
             }
             else{
@@ -121,6 +136,10 @@ class Tab3Fragment : Fragment() {
                 milli.text = ".00"
                 elementsArray.clear()
                 adapter.notifyDataSetChanged()
+                autoTransition.duration = 100
+                TransitionManager.beginDelayedTransition(listView, autoTransition)
+                TransitionManager.beginDelayedTransition(linButtonView)
+                listView.visibility = View.GONE
             }
         }
 
