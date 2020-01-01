@@ -119,6 +119,8 @@ class Tab3Fragment : Fragment() {
                 pauseOffset = 0
                 minsec.text = "00:00"
                 milli.text = ".00"
+                elementsArray.clear()
+                adapter.notifyDataSetChanged()
             }
         }
 
