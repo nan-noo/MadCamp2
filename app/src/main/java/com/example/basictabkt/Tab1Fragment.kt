@@ -1,10 +1,17 @@
 package com.example.basictabkt
 
+import com.example.basictabkt.R
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.content.ContextWrapper
+import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +22,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
+import androidx.recyclerview.widget.RecyclerView.generateViewId
 import java.io.Serializable
 import java.util.ArrayList
 import java.util.LinkedHashSet
@@ -27,11 +36,12 @@ class Tab1Fragment : Fragment() {
         var user_phNumber: String? = null
         var user_Name: String? = null
         //사진 부분
-//    var photo_id: Long = 0
-//    var person_id: Long = 0
+        var photo_id: Long = 0
+        var person_id: Long = 0
         var id: Int = 0
-        val phNumberChanged: String
-            get() = user_phNumber!!.replace("-", "")
+        var real_id: Int = 0
+//        val phNumberChanged: String
+//            get() = user_phNumber!!.replace("-", "")
 
         //실제 연락처를 ArrayList 형태로 가져오는 함수
         //            if (contactItem.getUser_phNumber().startsWith("01")) {
@@ -45,11 +55,12 @@ class Tab1Fragment : Fragment() {
         }
 
         override fun hashCode(): Int {
-            return phNumberChanged.hashCode()
+            return user_phNumber.hashCode()
+//            return phNumberChanged.hashCode()
         }
 
         fun equals(o: Serializable?): Boolean {
-            return if (o is ContactItem) phNumberChanged == o.phNumberChanged else false
+            return if (o is ContactItem) user_phNumber == o.user_phNumber else false
 
         }
 
@@ -62,9 +73,6 @@ class Tab1Fragment : Fragment() {
             val selectionArgs: Array<String>? = null
             val sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC"
 
-//            val contentResolver = Application().applicationContext.contentResolver
-//            val cursor = contentResolver.query(uri, projection, null,
-//                selectionArgs, sortOrder)
             val cursor = context(activityInstance).contentResolver.query(uri, projection, null,
                 selectionArgs, sortOrder)
 
@@ -74,14 +82,15 @@ class Tab1Fragment : Fragment() {
             val contactItems: ArrayList<ContactItem>
             if (cursor!!.moveToFirst()) {
                 do {
-//                    val photo_id = cursor!!.getLong(2)
-//                    val person_id = cursor!!.getLong(3)
+                    val photo_id = cursor!!.getLong(2)
+                    val person_id = cursor!!.getLong(3)
 
                     val contactItem = ContactItem()
                     contactItem.user_phNumber = cursor.getString(0)
                     contactItem.user_Name = cursor.getString(1)
-//                    contactItem.photo_id = photo_id
-//                    contactItem.person_id = person_id
+                    contactItem.photo_id = photo_id
+                    contactItem.person_id = person_id
+                    contactItem.real_id = cursor.getInt(cursor.getColumnIndex("_id"))
 
                     hashlist.add(contactItem)
 
@@ -99,38 +108,30 @@ class Tab1Fragment : Fragment() {
             return contactItems
         }
 
-    //    class App : Application() {
-//        init {
-//            instance = this
-//        }
-//    }
     private var mArrayList: ArrayList<ContactItem>? = null
-    //    private var mArrayList: ArrayList<Dictionary>? = null
     private var mAdapter: CustomAdapter? = null
     private var count = -1
-//    private val contactlist = contactList
 
     override fun onAttach(activity: Activity) {
         super.onAttach(activity)
         activityInstance = activity
     }
-    //    val activityInstanceVal = activityInstance!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         //권한이 부여되어 있는지 확인
-        val permissionCheck = ContextCompat.checkSelfPermission(context!!, android.Manifest.permission.READ_CONTACTS)
-
+        val permissionCheckR = ContextCompat.checkSelfPermission(context!!, android.Manifest.permission.READ_CONTACTS)
+        val permissionCheckW = ContextCompat.checkSelfPermission(context!!, android.Manifest.permission.WRITE_CONTACTS)
         val view = inflater.inflate(R.layout.fragment_tab1, container, false)
 
 
 
         //MainActivity 돌아올때마다 메세지 나옴
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(context!!.applicationContext, "연락처 열람권한 있음", Toast.LENGTH_SHORT).show()
+        if (permissionCheckR == PackageManager.PERMISSION_GRANTED) {
+//            Toast.makeText(context!!.applicationContext, "연락처 읽기권한 있음", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(context!!.applicationContext, "연락처 열람권한 없음", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context!!.applicationContext, "연락처 읽기권한 없음", Toast.LENGTH_SHORT).show()
 
             //권한설정 dialog에서 거부를 누르면
             //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
@@ -138,25 +139,87 @@ class Tab1Fragment : Fragment() {
             //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
             if (ActivityCompat.shouldShowRequestPermissionRationale(activityInstance!!, android.Manifest.permission.READ_CONTACTS)) {
                 //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
-                Toast.makeText(context!!.applicationContext, "연락처 권한이 필요합니다", Toast.LENGTH_SHORT).show()
-                ActivityCompat.requestPermissions(activityInstance!!, arrayOf(android.Manifest.permission.READ_CONTACTS), READ_CONTACTS_PERMISSION)
+                Toast.makeText(context!!.applicationContext, "연락처 읽기권한이 필요합니다", Toast.LENGTH_SHORT).show()
+                ActivityCompat.requestPermissions(activityInstance!!, arrayOf(android.Manifest.permission.READ_CONTACTS), CONTACTS_PERMISSION)
             } else {
-                ActivityCompat.requestPermissions(activityInstance!!, arrayOf(android.Manifest.permission.READ_CONTACTS), READ_CONTACTS_PERMISSION)
+                ActivityCompat.requestPermissions(activityInstance!!, arrayOf(android.Manifest.permission.READ_CONTACTS), CONTACTS_PERMISSION)
             }
 
         }
-//        val v = inflater.inflate(R.layout.fragment_tab1, container, false)
 
+        if (permissionCheckW == PackageManager.PERMISSION_GRANTED) {
+//            Toast.makeText(context!!.applicationContext, "연락처 쓰기권한 있음", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context!!.applicationContext, "연락처 쓰기권한 없음", Toast.LENGTH_SHORT).show()
+
+            //권한설정 dialog에서 거부를 누르면
+            //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
+            //단, 사용자가 "Don't ask again"을 체크한 경우
+            //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activityInstance!!, android.Manifest.permission.WRITE_CONTACTS)) {
+                //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
+                Toast.makeText(context!!.applicationContext, "연락처 쓰기권한이 필요합니다", Toast.LENGTH_SHORT).show()
+                ActivityCompat.requestPermissions(activityInstance!!, arrayOf(android.Manifest.permission.WRITE_CONTACTS), CONTACTS_PERMISSION)
+            } else {
+                ActivityCompat.requestPermissions(activityInstance!!, arrayOf(android.Manifest.permission.WRITE_CONTACTS), CONTACTS_PERMISSION)
+            }
+
+        }
+
+        val contextWrapper = ContextWrapper(context)
         val mRecyclerView = view.findViewById(R.id.recyclerview_main_list) as RecyclerView
+//        val mListitemView = view.findViewById(R.id.list_item) as androidx.constraintlayout.widget.ConstraintLayout
         val mLinearLayoutManager = LinearLayoutManager(context!!)
         mRecyclerView.layoutManager = mLinearLayoutManager
 
-
-//        mArrayList = ArrayList()
         mArrayList = contactList
-//helloeoeo
 
-        mAdapter = CustomAdapter(mArrayList)
+        mAdapter = CustomAdapter(mArrayList, context!!)
+
+        mAdapter!!.itemLongClick = object: CustomAdapter.ItemLongClick {
+            override fun onLongClick(view: View, position: Int) {
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("연락처 삭제")
+                builder.setMessage("정말 삭제하시겠습니까?")
+                val dialog_listener = object : DialogInterface.OnClickListener{
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        when (which) {
+                            DialogInterface.BUTTON_POSITIVE ->
+                            {
+                                //context(activityInstance), activityInstance!!, activityInstance!!.applicationContext, context!!, context!!.applicationContext, contextWrapper.baseContext, contextWrapper.baseContext.applicationContext
+                                val mContext = contextWrapper.baseContext.applicationContext
+//                val deletedrow1 = mContext.contentResolver.delete(ContactsContract.RawContacts.CONTENT_URI, ContactsContract.RawContacts.CONTACT_ID + " = " + mArrayList!![position].person_id, null)
+//                val deletedrow2 = mContext.contentResolver.delete(ContactsContract.RawContacts.CONTENT_URI, ContactsContract.RawContacts.CONTACT_ID + " = " + mArrayList!![position].real_id, null)
+//                val deletedrow3 = mContext.contentResolver.delete(ContactsContract.RawContacts.CONTENT_URI, ContactsContract.RawContacts.CONTACT_ID + " = " + position, null)
+//                mAdapter = CustomAdapter(contactList, context!!)
+                                val cur = mContext.contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null)
+                                var count = 0
+                                if (cur!!.moveToFirst()) {
+                                    do {
+                                        if (position == count) {
+                                            val lookupKey = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY))
+                                            val uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI, lookupKey)
+                                            mContext.contentResolver.delete(uri, null, null)
+                                            mArrayList = contactList
+                                            val longClick = mAdapter!!.itemLongClick
+                                            mAdapter = CustomAdapter(contactList, context!!)
+                                            mAdapter!!.itemLongClick = longClick
+                                            mRecyclerView.adapter = mAdapter
+                                            break
+                                        }
+                                        count++
+                                    } while (cur.moveToNext())
+                                }
+                                Log.d("Longclick", "Longclick" + position)
+                            }
+                        }
+                    }
+                }
+                builder.setPositiveButton("확인", dialog_listener)
+                builder.setNegativeButton("취소", dialog_listener)
+                builder.show()
+            }
+        }
         mRecyclerView.adapter = mAdapter
 
 
@@ -165,6 +228,21 @@ class Tab1Fragment : Fragment() {
             mLinearLayoutManager.orientation
         )
         mRecyclerView.addItemDecoration(dividerItemDecoration)
+//        mListitemView.setOnLongClickListener(View.OnLongClickListener() {
+//
+//            context(activityInstance).contentResolver.delete(ContactsContract.RawContacts.CONTENT_URI, )
+//        }
+//        )
+
+
+//        val buttonInsert = view.findViewById(R.id.button_main_insert) as Button
+//        buttonInsert.setOnClickListener {
+//
+////          연락처 추가
+//
+//
+//            mAdapter!!.notifyDataSetChanged()
+//        }
 
 
 
@@ -175,17 +253,22 @@ class Tab1Fragment : Fragment() {
     //필요한건지 모르겠으나 grantResults[]는 요청한 권한의 허용 여부 확인 가능
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            READ_CONTACTS_PERMISSION -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context!!.applicationContext, "연락처권한 승인함", Toast.LENGTH_SHORT).show()
+            CONTACTS_PERMISSION -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(context!!.applicationContext, "연락처 열람권한 승인함", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(context!!.applicationContext, "연락처권한 거부함", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context!!.applicationContext, "연락처 열람권한 거부함", Toast.LENGTH_SHORT).show()
             }
+            CONTACTS_PERMISSION -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(context!!.applicationContext, "연락처 쓰기권한 승인함", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context!!.applicationContext, "연락처 쓰기권한 거부함", Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
 
     companion object {
-        internal val READ_CONTACTS_PERMISSION = 1
-        private var instance: MainActivity? = null
+        internal val CONTACTS_PERMISSION = 1
 
         fun context(activity: Activity?) : Context {
             return activity!!.applicationContext
