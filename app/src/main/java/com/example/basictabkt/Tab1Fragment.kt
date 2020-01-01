@@ -1,9 +1,7 @@
 package com.example.basictabkt
 
-import com.example.basictabkt.R
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.DialogInterface
@@ -22,8 +20,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
-import androidx.recyclerview.widget.RecyclerView.generateViewId
 import java.io.Serializable
 import java.util.ArrayList
 import java.util.LinkedHashSet
@@ -40,15 +36,6 @@ class Tab1Fragment : Fragment() {
         var person_id: Long = 0
         var id: Int = 0
         var real_id: Int = 0
-//        val phNumberChanged: String
-//            get() = user_phNumber!!.replace("-", "")
-
-        //실제 연락처를 ArrayList 형태로 가져오는 함수
-        //            if (contactItem.getUser_phNumber().startsWith("01")) {
-        //                hashList.add(contactItem);
-        //                //contactsList.add(myContact);
-        //                Log.d("<<CONTACTS>>", "name=" + contactItem.getUser_Name() + ", phone=" + contactItem.getUser_phNumber());
-        //            }
 
         override fun toString(): String {
             return this.user_phNumber!!
@@ -168,7 +155,6 @@ class Tab1Fragment : Fragment() {
 
         val contextWrapper = ContextWrapper(context)
         val mRecyclerView = view.findViewById(R.id.recyclerview_main_list) as RecyclerView
-//        val mListitemView = view.findViewById(R.id.list_item) as androidx.constraintlayout.widget.ConstraintLayout
         val mLinearLayoutManager = LinearLayoutManager(context!!)
         mRecyclerView.layoutManager = mLinearLayoutManager
 
@@ -188,10 +174,6 @@ class Tab1Fragment : Fragment() {
                             {
                                 //context(activityInstance), activityInstance!!, activityInstance!!.applicationContext, context!!, context!!.applicationContext, contextWrapper.baseContext, contextWrapper.baseContext.applicationContext
                                 val mContext = contextWrapper.baseContext.applicationContext
-//                val deletedrow1 = mContext.contentResolver.delete(ContactsContract.RawContacts.CONTENT_URI, ContactsContract.RawContacts.CONTACT_ID + " = " + mArrayList!![position].person_id, null)
-//                val deletedrow2 = mContext.contentResolver.delete(ContactsContract.RawContacts.CONTENT_URI, ContactsContract.RawContacts.CONTACT_ID + " = " + mArrayList!![position].real_id, null)
-//                val deletedrow3 = mContext.contentResolver.delete(ContactsContract.RawContacts.CONTENT_URI, ContactsContract.RawContacts.CONTACT_ID + " = " + position, null)
-//                mAdapter = CustomAdapter(contactList, context!!)
                                 val cur = mContext.contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null)
                                 var count = 0
                                 if (cur!!.moveToFirst()) {
@@ -228,29 +210,12 @@ class Tab1Fragment : Fragment() {
             mLinearLayoutManager.orientation
         )
         mRecyclerView.addItemDecoration(dividerItemDecoration)
-//        mListitemView.setOnLongClickListener(View.OnLongClickListener() {
-//
-//            context(activityInstance).contentResolver.delete(ContactsContract.RawContacts.CONTENT_URI, )
-//        }
-//        )
-
-
-//        val buttonInsert = view.findViewById(R.id.button_main_insert) as Button
-//        buttonInsert.setOnClickListener {
-//
-////          연락처 추가
-//
-//
-//            mAdapter!!.notifyDataSetChanged()
-//        }
-
-
 
         return view
 
     }
 
-    //필요한건지 모르겠으나 grantResults[]는 요청한 권한의 허용 여부 확인 가능
+    //grantResults[]는 요청한 권한의 허용 여부 확인 가능
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             CONTACTS_PERMISSION -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
