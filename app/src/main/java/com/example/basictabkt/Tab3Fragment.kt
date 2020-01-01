@@ -8,10 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Chronometer
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.os.postDelayed
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_tab3.*
@@ -33,6 +30,11 @@ class Tab3Fragment : Fragment() {
         var startTime:Long = 0
         var passedTime:Long = 0
         var timeBuff:Long = 0
+        var elementsArray:ArrayList<String> = arrayListOf()
+        val adapter = ArrayAdapter<String>(context!!, android.R.layout.simple_list_item_1, elementsArray)
+        val listView = view.findViewById(R.id.recList) as ListView
+
+        listView.adapter = adapter
 
 
 //        chronometer = view.findViewById(R.id.chronometer)
@@ -88,9 +90,14 @@ class Tab3Fragment : Fragment() {
             }
         }
 
+        val button2 = view.findViewById(R.id.record) as Button
+        button2.setOnClickListener{
+            elementsArray.add(String.format("%s%s", minsec.text, milli.text))
+            adapter.notifyDataSetChanged()
+        }
 
-        val button2 = view.findViewById(R.id.reset) as Button
-        button2.setOnClickListener {
+        val button3 = view.findViewById(R.id.reset) as Button
+        button3.setOnClickListener {
 
             startTime = 0
             timeBuff = 0
@@ -103,6 +110,8 @@ class Tab3Fragment : Fragment() {
                 minsec.text = "00:00"
                 milli.text = ".00"
                 button1.setText("Start")
+                elementsArray.clear()
+                adapter.notifyDataSetChanged()
                 running = false
             }
             else{
