@@ -11,15 +11,11 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-
         <FrameLayout
             android:layout_width="310dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="100dp">
-
-
             <TextView
                 android:id="@+id/minsec"
                 android:layout_width="310dp"
@@ -30,7 +26,6 @@
                 android:text="00:00"
                 android:textColor="#FFFFFF"
                 android:textSize="75sp" />
-
             <TextView
                 android:id="@+id/milliseconds"
                 android:layout_width="60dp"
@@ -40,10 +35,7 @@
                 android:text=".00"
                 android:textColor="#FFFFFF"
                 android:textSize="25sp" />
-
-
         </FrameLayout>
-
         <Button
             android:id="@+id/start"
             android:layout_width="wrap_content"
@@ -54,7 +46,6 @@
             android:onClick="start"
             android:text="Start"
             tools:ignore="OnClick" />
-
         <Button
             android:id="@+id/record"
             android:layout_width="wrap_content"
@@ -65,8 +56,6 @@
             android:onClick="record"
             android:text="Record"
             tools:ignore="OnClick" />
-
-
         <Button
             android:id="@+id/reset"
             android:layout_width="wrap_content"
@@ -77,7 +66,6 @@
             android:onClick="reset"
             android:text="Reset"
             tools:ignore="OnClick" />
-
         <ListView
             android:id="@+id/recList"
             android:layout_width="wrap_content"
@@ -85,7 +73,5 @@
             android:layout_gravity="bottom"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="30dp" />
-
     </FrameLayout>
-
 </LinearLayout>
