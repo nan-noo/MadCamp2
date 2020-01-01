@@ -15,7 +15,6 @@
         android:background="#7f000000"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        android:textStyle="bold"
         android:padding="10dp"
         android:gravity="center"
         android:layout_alignParentBottom="true"
