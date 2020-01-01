@@ -12,32 +12,19 @@ tools:context=".MainActivity">
         android:background="#202020"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="82dp"
-            android:layout_height="39dp"
-            android:background="#202020"
-            android:gravity="center"
-            android:minHeight="?actionBarSize"
-            android:padding="10dp"
-
-            android:text="Project1"
-            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#202020" />
+            android:layout_height="match_parent"
+            android:background="#202020"
+            app:tabIndicatorColor="#C20000" />
     </com.google.android.material.appbar.AppBarLayout>
 
-<androidx.viewpager.widget.ViewPager
-    android:id="@+id/view_pager"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
