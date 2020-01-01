@@ -15,12 +15,14 @@ class Tab3Fragment : Fragment() {
     private var chronometer: Chronometer? = null
     private var pauseOffset: Long = 0
     private var running: Boolean = false
+    private var milli: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_tab3, container, false)
+
 
         chronometer = view.findViewById(R.id.chronometer)
         chronometer!!.format = "%s"
@@ -40,6 +42,7 @@ class Tab3Fragment : Fragment() {
                 chronometer!!.base = SystemClock.elapsedRealtime() - pauseOffset
                 chronometer!!.start()
                 running = true
+
             }
         }
 
@@ -54,8 +57,16 @@ class Tab3Fragment : Fragment() {
 
         val button3 = view.findViewById(R.id.reset) as Button
         button3.setOnClickListener {
-            chronometer!!.base = SystemClock.elapsedRealtime()
-            pauseOffset = 0
+            if (running) {
+                chronometer!!.stop()
+                chronometer!!.base = SystemClock.elapsedRealtime()
+                pauseOffset = 0
+                running = false
+            }
+            else{
+                chronometer!!.base = SystemClock.elapsedRealtime()
+                pauseOffset = 0
+            }
         }
 
         return view
