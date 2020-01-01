@@ -57,7 +57,6 @@ class Tab2Fragment : Fragment() {
         val gv = view.findViewById<GridView>(R.id.gridView1)
         gv.adapter = adapter  // 커스텀 아답타를 GridView 에 적용
 
-        // GridView 아이템을 클릭하면 상단 텍스트뷰에 position 출력
         // JAVA8 에 등장한 lambda expression 으로 구현했습니다. 코드가 많이 간결해지네요
         gv.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
