@@ -1,11 +1,11 @@
 package com.example.basictabkt
 
 import android.os.Bundle
-import android.app.Activity
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 
 
-class FullImageActivity : Activity() {
+class FullImageActivity : AppCompatActivity() {
 
     private val img = intArrayOf(
         R.drawable.c,
@@ -34,6 +34,11 @@ class FullImageActivity : Activity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        setContentView(R.layout.fragment_gallery_fullscreen)
+//        val imageAdapter = ImageAdapter(this, supportFragmentManager)
+//        val viewPager: ViewPager = findViewById(R.id.view_pager1)
+//        viewPager.adapter = imageAdapter
+
         setContentView(R.layout.fullimage)
 
         // get intent data
@@ -44,7 +49,7 @@ class FullImageActivity : Activity() {
 
         val imageView = findViewById<ImageView>(R.id.image_center)
         imageView.setImageResource(img[position])
-    }
 
+    }
 
 }
