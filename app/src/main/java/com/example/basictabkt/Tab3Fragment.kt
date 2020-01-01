@@ -58,28 +58,27 @@ class Tab3Fragment : Fragment() {
                 chronometer!!.base = SystemClock.elapsedRealtime() - pauseOffset
                 chronometer!!.start()
                 handler.postDelayed(runnable, 0)
+                button1.setText("Pause")
                 running = true
-
-            }
-        }
-
-        val button2 = view.findViewById(R.id.pause) as Button
-        button2.setOnClickListener {
-            if (running) {
+            } else{
                 chronometer!!.stop()
                 pauseOffset = SystemClock.elapsedRealtime() - chronometer!!.base
+                handler.postDelayed(runnable, 0)
                 handler.removeCallbacks(runnable)
+                button1.setText("Start")
                 running = false
             }
         }
 
-        val button3 = view.findViewById(R.id.reset) as Button
-        button3.setOnClickListener {
+
+        val button2 = view.findViewById(R.id.reset) as Button
+        button2.setOnClickListener {
             if (running) {
                 chronometer!!.stop()
                 chronometer!!.base = SystemClock.elapsedRealtime()
                 pauseOffset = 0
                 milli.text = ".00"
+                button1.setText("Start")
                 running = false
             }
             else{

@@ -47,15 +47,6 @@
         android:text="Start"
         tools:ignore="OnClick" />
 
-    <Button
-        android:id="@+id/pause"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:background="@drawable/selector_view"
-        android:onClick="pause"
-        android:text="Pause"
-        tools:ignore="OnClick" />
 
     <Button
         android:id="@+id/reset"
