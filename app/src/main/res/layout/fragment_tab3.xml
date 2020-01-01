@@ -11,17 +11,9 @@
 
     <FrameLayout
         android:layout_width="310dp"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#202020">
 
-        <Chronometer
-            android:id="@+id/chronometer"
-            android:layout_width="310dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:background="#282828"
-            android:gravity="center"
-            android:textColor="#FFFFFF"
-            android:textSize="75dp" />
 
         <TextView
             android:id="@+id/milliseconds"
@@ -31,9 +23,16 @@
             android:layout_marginBottom="18sp"
             android:text=".00"
             android:textColor="#FFFFFF"
-            android:textSize="25sp"
-            app:autoSizeMaxTextSize="30sp"
-            app:autoSizeMinTextSize="20sp" />
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/minsec"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:text="00:00"
+            android:textColor="#FFFFFF"
+            android:textSize="75sp" />
 
     </FrameLayout>
 
