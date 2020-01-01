@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.os.Build
-import android.provider.Contacts.People.loadContactPhoto
 import android.provider.ContactsContract
 import android.util.Log
 import android.util.TypedValue
