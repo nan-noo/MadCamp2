@@ -45,7 +45,7 @@ class Tab3Fragment : Fragment() {
         var runnable: Runnable? = null
         runnable = Runnable {
             if (running) {
-                val millisecondsTime = SystemClock.uptimeMillis() - chronometer!!.base
+                val millisecondsTime = SystemClock.elapsedRealtime() - chronometer!!.base
                 val milliseconds = (millisecondsTime % 1000).toInt() / 10
                 milli.text = String.format(".%02d", milliseconds)
                 handler.postDelayed(runnable!!, 0)
@@ -79,11 +79,13 @@ class Tab3Fragment : Fragment() {
                 chronometer!!.stop()
                 chronometer!!.base = SystemClock.elapsedRealtime()
                 pauseOffset = 0
+                milli.text = ".00"
                 running = false
             }
             else{
                 chronometer!!.base = SystemClock.elapsedRealtime()
                 pauseOffset = 0
+                milli.text = ".00"
             }
         }
 
