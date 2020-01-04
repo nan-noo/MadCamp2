@@ -4,4 +4,8 @@
     <string name="tab_text_2">Gallery</string>
     <string name="tab_text_3">Stop Watch</string>
 
+    <string name="facebook_app_id">584240775703904</string>
+    <string name="fb_login_protocol_scheme">fb584240775703904</string>
+
+
 </resources>
