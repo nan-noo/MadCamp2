@@ -1,5 +1,6 @@
 package com.example.basictabkt
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -40,10 +41,11 @@ class MainActivity : AppCompatActivity() {
         mCallbackManager!!.onActivityResult(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
 
+       if(resultCode == Activity.RESULT_OK) { // 제대로 로그인 됐을 때만 넘어가게
+           val intent = Intent(this, TabActivity::class.java)
+           startActivity(intent)
 
-        //로그인 창을 그냥 닫았을시에도 실행됨. 수정ㄱㄱ
-        val intent = Intent(this, TabActivity::class.java)
-        startActivity(intent)
+       }
     }
 
 }

@@ -27,4 +27,17 @@
 
     </androidx.viewpager.widget.ViewPager>
 
+
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="#3B5998"
+        android:foregroundGravity="center_vertical"
+        android:text="Logout"
+        android:textColor="#FFFFFF" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
