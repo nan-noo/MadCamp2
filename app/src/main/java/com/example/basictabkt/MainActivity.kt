@@ -50,6 +50,9 @@ class MainActivity : AppCompatActivity() {
         btn_custom_login = findViewById(R.id.btn_custom_login)
         btn_custom_login!!.setOnClickListener { btn_facebook_login!!.performClick() }
 
+        //
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
