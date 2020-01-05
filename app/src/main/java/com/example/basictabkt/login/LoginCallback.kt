@@ -59,6 +59,8 @@ class LoginCallback : FacebookCallback<LoginResult>{
         val parameters = Bundle()
         parameters.putString("user_info", "id,name,email,gender,birthday")
         graphRequest.parameters = parameters
+
+
         graphRequest.executeAsync()
     }
 }

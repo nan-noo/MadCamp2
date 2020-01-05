@@ -50,9 +50,6 @@ class MainActivity : AppCompatActivity() {
         btn_custom_login = findViewById(R.id.btn_custom_login)
         btn_custom_login!!.setOnClickListener { btn_facebook_login!!.performClick() }
 
-        //
-
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -60,9 +57,6 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
        if(resultCode == Activity.RESULT_OK) { // 제대로 로그인 됐을 때만 넘어가게
-
-
-
            Toast.makeText(
                applicationContext,
                "환영합니다!",
@@ -71,8 +65,6 @@ class MainActivity : AppCompatActivity() {
 
            val intent = Intent(this, TabActivity::class.java)
            startActivity(intent)
-
        }
     }
-
 }
