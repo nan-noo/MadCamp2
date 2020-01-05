@@ -18,28 +18,6 @@ class LoginCallback : FacebookCallback<LoginResult>{
     // 로그인 성공 시 호출 됩니다. Access Token 발급 성공.
     override fun onSuccess(loginResult: LoginResult) {
         Log.e("Callback :: ", "onSuccess")
-
-        GraphRequest.newMeRequest(
-            loginResult.accessToken
-        ) { me, response ->
-            if (response.error != null) {
-                // handle error
-            } else {
-                //val email = me.optString("email") 이메일은 토스트에 안뜸 왜 그러지? 암튼 아이디만 사용
-                val id = me.optString("id")
-                val name = me.optString("name")
-
-                //제대로 들어왔는지 확인
-                Toast.makeText(
-                    getApplicationContext(),
-
-                    "name: $name / id: $id",
-
-                    Toast.LENGTH_LONG
-                ).show()
-                // send email and id to your web server
-            }
-        }.executeAsync()
         requestMe(loginResult.accessToken)
     }
 
@@ -55,13 +33,31 @@ class LoginCallback : FacebookCallback<LoginResult>{
     }
 
     // 사용자 정보 요청
-    fun requestMe(token: AccessToken) {
+    private fun requestMe(token: AccessToken) {
         val graphRequest = GraphRequest.newMeRequest(
             token
-        ) { `object`, response -> Log.e("result", `object`.toString()) }
-        val parameters = Bundle()
+        ) { me, response ->
+            if (response.error != null) {
+                // handle error
+            } else {
+                Log.e("result", me.toString())
+            }
 
-        parameters.putString("fields", "id,name,email,gender,birthday")
+            //제대로 들어왔는지 확인
+//            val id = me.optString("id")
+//            val name = me.optString("name")
+//
+//            Toast.makeText(
+//                getApplicationContext(),
+//
+//                "name: $name / id: $id",
+//
+//                Toast.LENGTH_LONG
+//            ).show()
+            // send email and id to your web server
+        }
+        val parameters = Bundle()
+        parameters.putString("user_info", "id,name,email,gender,birthday")
         graphRequest.parameters = parameters
         graphRequest.executeAsync()
     }
