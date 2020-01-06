@@ -18,10 +18,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.basictabkt.login.Contact
 import java.util.*
 
 
-class CustomAdapter(private val mList: ArrayList<Tab1Fragment.ContactItem>?, private val mContext: Context) :
+class CustomAdapter(private val mList2: ArrayList<Tab1Fragment.ContactItem>?, private val mList: List<Contact>?, private val mContext: Context) :
     RecyclerView.Adapter<CustomAdapter.CustomViewHolder>() {
 
     interface ItemLongClick {
@@ -33,7 +34,6 @@ class CustomAdapter(private val mList: ArrayList<Tab1Fragment.ContactItem>?, pri
         var photo: ImageView? = null
         var name: TextView
         var phNumber: TextView
-
 
         init {
             this.photo = view.findViewById(R.id.photo_listitem) as ImageView
@@ -62,21 +62,21 @@ class CustomAdapter(private val mList: ArrayList<Tab1Fragment.ContactItem>?, pri
 
 
         viewholder.photo?.setImageDrawable(mContext.resources.getDrawable(R.drawable.empty_profile))
-        val profile = loadContactPhoto(mContext.contentResolver, mList!![position].person_id, mList[position].photo_id)
-        viewholder.name.setText(mList!![position].user_Name)
-        viewholder.phNumber.setText(mList?.get(position).user_phNumber)
-        if (profile != null) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                viewholder.photo?.setBackground(ShapeDrawable(OvalShape()))
-                viewholder.photo?.setClipToOutline(true)
-            }
-            viewholder.photo?.setImageBitmap(profile)
-        } else {
-            //            viewHolder.profile.setImageDrawable(mContext.getResources().getDrawable(R.drawable.img_profile_thumnail));
-            if (Build.VERSION.SDK_INT >= 21) {
-                viewholder.photo?.setClipToOutline(false)
-            }
-        }
+ //       val profile = loadContactPhoto(mContext.contentResolver, mList!![position].person_id, mList[position].photo_id)
+        viewholder.name.text = mList!![position].get_name()
+        viewholder.phNumber.text = mList!![position].get_phNum()
+//        if (profile != null) {
+//            if (Build.VERSION.SDK_INT >= 21) {
+//                viewholder.photo?.setBackground(ShapeDrawable(OvalShape()))
+//                viewholder.photo?.setClipToOutline(true)
+//            }
+//            viewholder.photo?.setImageBitmap(profile)
+//        } else {
+//            //            viewHolder.profile.setImageDrawable(mContext.getResources().getDrawable(R.drawable.img_profile_thumnail));
+//            if (Build.VERSION.SDK_INT >= 21) {
+//                viewholder.photo?.setClipToOutline(false)
+//            }
+//        }
 
         if(itemLongClick != null) {
             viewholder.itemView.setOnLongClickListener{

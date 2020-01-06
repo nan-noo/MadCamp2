@@ -43,6 +43,7 @@ class LoginCallback : FacebookCallback<LoginResult>{
             } else {
                 Log.e("result>>>>>>>>>>>>>>>>>", me.toString())
             }
+
         }
         val parameters = Bundle()
         parameters.putString("field", "id,name")

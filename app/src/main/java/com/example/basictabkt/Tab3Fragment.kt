@@ -43,20 +43,6 @@ class Tab3Fragment : Fragment() {
         val autoTransition = AutoTransition()
         listView.adapter = adapter
 
-
-//        chronometer = view.findViewById(R.id.chronometer)
-//        chronometer!!.format = "%s"
-//        chronometer!!.base = SystemClock.elapsedRealtime()
-//
-//        chronometer!!.onChronometerTickListener =
-//            Chronometer.OnChronometerTickListener { chronometer ->
-//                if (SystemClock.elapsedRealtime() - chronometer.base >= 10000000) {
-//                    Log.d("elapsedtime", (SystemClock.elapsedRealtime() - chronometer.base).toString())
-//                    chronometer.base = SystemClock.elapsedRealtime()
-//                    Toast.makeText(context, "OutOfBound!", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-
         var runnable: Runnable? = null
         runnable = Runnable {
             if (running) {

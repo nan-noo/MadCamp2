@@ -7,6 +7,7 @@ import android.content.ContextWrapper
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
@@ -20,11 +21,20 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.basictabkt.login.Contact
+import com.facebook.AccessToken
+import com.google.gson.Gson
+import io.github.rybalkinsd.kohttp.dsl.httpPost
+import io.github.rybalkinsd.kohttp.ext.url
 import java.io.Serializable
+import java.net.URL
 import java.util.ArrayList
 import java.util.LinkedHashSet
 
 class Tab1Fragment : Fragment() {
+
+    val accessToken = AccessToken.getCurrentAccessToken()
+    val userId = accessToken.userId
 
     var activityInstance: Activity? = null
 
@@ -71,14 +81,20 @@ class Tab1Fragment : Fragment() {
                 do {
                     val photo_id = cursor!!.getLong(2)
                     val person_id = cursor!!.getLong(3)
-
+// contactItem 안쓸거임 수정하기 귀찮아서 그냥 안쓰고 냅둠
                     val contactItem = ContactItem()
                     contactItem.user_phNumber = cursor.getString(0)
                     contactItem.user_Name = cursor.getString(1)
                     contactItem.photo_id = photo_id
                     contactItem.person_id = person_id
                     contactItem.real_id = cursor.getInt(cursor.getColumnIndex("_id"))
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    val user_phNumber = cursor.getString(0)
+                    val user_Name = cursor.getString(1)
+                    val real_id = cursor.getString(cursor.getColumnIndex("_id"))
 
+                    JSONTask_ph(userId, user_Name, user_phNumber, real_id).execute()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     hashlist.add(contactItem)
 
                 } while (cursor.moveToNext())
@@ -91,11 +107,11 @@ class Tab1Fragment : Fragment() {
 
             cursor.close()
 
-
             return contactItems
         }
 
-    private var mArrayList: ArrayList<ContactItem>? = null
+    private var mArrayList: List<Contact>? = null
+    private var mArrayList2: ArrayList<ContactItem>? = null
     private var mAdapter: CustomAdapter? = null
     private var count = -1
 
@@ -108,11 +124,11 @@ class Tab1Fragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         //권한이 부여되어 있는지 확인
-        val permissionCheckR = ContextCompat.checkSelfPermission(context!!, android.Manifest.permission.READ_CONTACTS)
-        val permissionCheckW = ContextCompat.checkSelfPermission(context!!, android.Manifest.permission.WRITE_CONTACTS)
+        val permissionCheckR =
+            ContextCompat.checkSelfPermission(context!!, android.Manifest.permission.READ_CONTACTS)
+        val permissionCheckW =
+            ContextCompat.checkSelfPermission(context!!, android.Manifest.permission.WRITE_CONTACTS)
         val view = inflater.inflate(R.layout.fragment_tab1, container, false)
-
-        //
 
         //MainActivity 돌아올때마다 메세지 나옴
         if (permissionCheckR == PackageManager.PERMISSION_GRANTED) {
@@ -124,12 +140,25 @@ class Tab1Fragment : Fragment() {
             //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
             //단, 사용자가 "Don't ask again"을 체크한 경우
             //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activityInstance!!, android.Manifest.permission.READ_CONTACTS)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    activityInstance!!,
+                    android.Manifest.permission.READ_CONTACTS
+                )
+            ) {
                 //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
-                Toast.makeText(context!!.applicationContext, "연락처 읽기권한이 필요합니다", Toast.LENGTH_SHORT).show()
-                ActivityCompat.requestPermissions(activityInstance!!, arrayOf(android.Manifest.permission.READ_CONTACTS), CONTACTS_PERMISSION)
+                Toast.makeText(context!!.applicationContext, "연락처 읽기권한이 필요합니다", Toast.LENGTH_SHORT)
+                    .show()
+                ActivityCompat.requestPermissions(
+                    activityInstance!!,
+                    arrayOf(android.Manifest.permission.READ_CONTACTS),
+                    CONTACTS_PERMISSION
+                )
             } else {
-                ActivityCompat.requestPermissions(activityInstance!!, arrayOf(android.Manifest.permission.READ_CONTACTS), CONTACTS_PERMISSION)
+                ActivityCompat.requestPermissions(
+                    activityInstance!!,
+                    arrayOf(android.Manifest.permission.READ_CONTACTS),
+                    CONTACTS_PERMISSION
+                )
             }
 
         }
@@ -143,12 +172,25 @@ class Tab1Fragment : Fragment() {
             //ActivityCompat.shouldShowRequestPermissionRationale 메소드의 반환값이 true가 된다.
             //단, 사용자가 "Don't ask again"을 체크한 경우
             //거부하더라도 false를 반환하여, 직접 사용자가 권한을 부여하지 않는 이상, 권한을 요청할 수 없게 된다.
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activityInstance!!, android.Manifest.permission.WRITE_CONTACTS)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    activityInstance!!,
+                    android.Manifest.permission.WRITE_CONTACTS
+                )
+            ) {
                 //이곳에 권한이 왜 필요한지 설명하는 Toast나 dialog를 띄워준 후, 다시 권한을 요청한다.
-                Toast.makeText(context!!.applicationContext, "연락처 쓰기권한이 필요합니다", Toast.LENGTH_SHORT).show()
-                ActivityCompat.requestPermissions(activityInstance!!, arrayOf(android.Manifest.permission.WRITE_CONTACTS), CONTACTS_PERMISSION)
+                Toast.makeText(context!!.applicationContext, "연락처 쓰기권한이 필요합니다", Toast.LENGTH_SHORT)
+                    .show()
+                ActivityCompat.requestPermissions(
+                    activityInstance!!,
+                    arrayOf(android.Manifest.permission.WRITE_CONTACTS),
+                    CONTACTS_PERMISSION
+                )
             } else {
-                ActivityCompat.requestPermissions(activityInstance!!, arrayOf(android.Manifest.permission.WRITE_CONTACTS), CONTACTS_PERMISSION)
+                ActivityCompat.requestPermissions(
+                    activityInstance!!,
+                    arrayOf(android.Manifest.permission.WRITE_CONTACTS),
+                    CONTACTS_PERMISSION
+                )
             }
 
         }
@@ -157,60 +199,79 @@ class Tab1Fragment : Fragment() {
         val mRecyclerView = view.findViewById(R.id.recyclerview_main_list) as RecyclerView
         val mLinearLayoutManager = LinearLayoutManager(context!!)
         mRecyclerView.layoutManager = mLinearLayoutManager
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        mArrayList2 = contactList
 
-        mArrayList = contactList
 
-        mAdapter = CustomAdapter(mArrayList, context!!)
+        JSONTask(userId).execute("http://192.249.19.254:8280/") //AsyncTask 시작시킴
+        // 불러오기 버튼!
+        val get_btn = view.findViewById(R.id.get_btn) as Button
+        get_btn.setOnClickListener {
 
-        mAdapter!!.itemLongClick = object: CustomAdapter.ItemLongClick {
-            override fun onLongClick(view: View, position: Int) {
-                val builder = AlertDialog.Builder(context)
-                builder.setTitle("연락처 삭제")
-                builder.setMessage("정말 삭제하시겠습니까?")
-                val dialog_listener = object : DialogInterface.OnClickListener{
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                        when (which) {
-                            DialogInterface.BUTTON_POSITIVE ->
-                            {
-                                //context(activityInstance), activityInstance!!, activityInstance!!.applicationContext, context!!, context!!.applicationContext, contextWrapper.baseContext, contextWrapper.baseContext.applicationContext
-                                val mContext = contextWrapper.baseContext.applicationContext
-                                val cur = mContext.contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null)
-                                var count = 0
-                                if (cur!!.moveToFirst()) {
-                                    do {
-                                        if (position == count) {
-                                            val lookupKey = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY))
-                                            val uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI, lookupKey)
-                                            mContext.contentResolver.delete(uri, null, null)
-                                            mArrayList = contactList
-                                            val longClick = mAdapter!!.itemLongClick
-                                            mAdapter = CustomAdapter(contactList, context!!)
-                                            mAdapter!!.itemLongClick = longClick
-                                            mRecyclerView.adapter = mAdapter
-                                            break
-                                        }
-                                        count++
-                                    } while (cur.moveToNext())
+            mArrayList = global_person_list
+            mAdapter = CustomAdapter(mArrayList2, mArrayList, context!!)
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            mAdapter!!.itemLongClick = object : CustomAdapter.ItemLongClick {
+                override fun onLongClick(view: View, position: Int) {
+                    val builder = AlertDialog.Builder(context)
+                    builder.setTitle("연락처 삭제")
+                    builder.setMessage("정말 삭제하시겠습니까?")
+                    val dialog_listener = object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            when (which) {
+                                DialogInterface.BUTTON_POSITIVE -> {
+                                    //context(activityInstance), activityInstance!!, activityInstance!!.applicationContext, context!!, context!!.applicationContext, contextWrapper.baseContext, contextWrapper.baseContext.applicationContext
+                                    val mContext = contextWrapper.baseContext.applicationContext
+                                    val cur = mContext.contentResolver.query(
+                                        ContactsContract.Contacts.CONTENT_URI,
+                                        null,
+                                        null,
+                                        null,
+                                        null
+                                    )
+                                    var count = 0
+                                    if (cur!!.moveToFirst()) {
+                                        do {
+                                            if (position == count) {
+                                                val lookupKey =
+                                                    cur.getString(cur.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY))
+                                                val uri = Uri.withAppendedPath(
+                                                    ContactsContract.Contacts.CONTENT_LOOKUP_URI,
+                                                    lookupKey
+                                                )
+                                                mContext.contentResolver.delete(uri, null, null)
+                                                mArrayList = global_person_list
+                                                val longClick = mAdapter!!.itemLongClick
+                                                mAdapter = CustomAdapter(contactList, mArrayList, context!!)
+                                                mAdapter!!.itemLongClick = longClick
+                                                mRecyclerView.adapter = mAdapter
+                                                break
+                                            }
+                                            count++
+                                        } while (cur.moveToNext())
+                                    }
+                                    Log.d("Longclick", "Longclick" + position)
                                 }
-                                Log.d("Longclick", "Longclick" + position)
                             }
                         }
                     }
+                    builder.setPositiveButton("확인", dialog_listener)
+                    builder.setNegativeButton("취소", dialog_listener)
+                    builder.show()
                 }
-                builder.setPositiveButton("확인", dialog_listener)
-                builder.setNegativeButton("취소", dialog_listener)
-                builder.show()
             }
+            mRecyclerView.adapter = mAdapter
+
+
+            val dividerItemDecoration = DividerItemDecoration(
+                mRecyclerView.context,
+                mLinearLayoutManager.orientation
+            )
+            mRecyclerView.addItemDecoration(dividerItemDecoration)
         }
-        mRecyclerView.adapter = mAdapter
-
-
-        val dividerItemDecoration = DividerItemDecoration(
-            mRecyclerView.context,
-            mLinearLayoutManager.orientation
-        )
-        mRecyclerView.addItemDecoration(dividerItemDecoration)
-
         return view
 
     }
@@ -232,8 +293,66 @@ class Tab1Fragment : Fragment() {
         }
     }
 
+
+    class JSONTask(id: String) :
+        AsyncTask<String?, String?, String?>() {
+
+        private val user_id = id
+
+        override fun doInBackground(vararg urls: String?): String? {
+            try {
+
+                var getContact =
+                    URL("http://192.249.19.254:8280/api/contacts/user_id/$user_id").readText() // 로그인한 유저가 받은 아이디로 찾기 //not found 일 때 처리
+
+                var json = getContact
+                var gson = Gson()
+                global_person_list = gson.fromJson(json, Array<Contact>::class.java).toList()
+
+                Log.i("Contact>>>>>>>>>>>>>>>>", getContact )//형태>> [{"_id":"5e11cddde1fc032f3ba8e4c3","phNum":"010-121324-1124","name":"dafoudfasfi"}]
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+    }
+
+    class JSONTask_ph(userId: String, user_Name: String, user_phNumber: String, real_id: String):
+        AsyncTask<String?, String?, String?>() {
+
+        private val user_id = userId
+        private val user_name = user_Name
+        private val user_phNumber = user_phNumber
+        private val _id = real_id
+
+        override fun doInBackground(vararg urls: String?): String? {
+            try {
+                //post
+                var post = httpPost {
+                    url("http://192.249.19.254:8280/api/contacts")
+                    body {
+                        form("user_id=$user_id&" +
+                                "phNum=$user_phNumber&" +
+                                "name=$user_name&" +
+                                "_id=$_id"
+                        )
+                    }
+                }
+                Log.i("post>>>>>>>>>>>>>>>>>>", post.message())
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+    }
+
     companion object {
         lateinit var id: String
+
+        lateinit var global_person_list: List<Contact>
 
         internal val CONTACTS_PERMISSION = 1
 
@@ -241,8 +360,6 @@ class Tab1Fragment : Fragment() {
             return activity!!.applicationContext
         }
     }
-
-
 }// Required empty public constructor
 
 
