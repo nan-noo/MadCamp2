@@ -270,7 +270,7 @@ class Tab1Fragment : Fragment() {
             mRecyclerView.addItemDecoration(dividerItemDecoration)
         }
 
-        val post_btn = view.findViewById(R.id.get_btn) as Button
+        val post_btn = view.findViewById(R.id.post_btn) as Button
         get_btn.setOnClickListener{
 
         }
