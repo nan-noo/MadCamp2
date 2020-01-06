@@ -1,20 +1,12 @@
 package com.example.basictabkt.login
 
 import android.annotation.SuppressLint
-import android.os.AsyncTask
 import android.os.Bundle
-import android.os.Message
 import android.util.Log
 import com.facebook.*
 import com.facebook.login.LoginResult
-import android.widget.Toast
-import com.facebook.FacebookSdk.getApplicationContext
+
 import com.facebook.GraphRequest
-import com.google.gson.Gson
-import io.github.rybalkinsd.kohttp.dsl.httpDelete
-import io.github.rybalkinsd.kohttp.dsl.httpPost
-import io.github.rybalkinsd.kohttp.ext.url
-import java.net.URL
 
 
 @SuppressLint("Registered")
@@ -25,6 +17,7 @@ class LoginCallback : FacebookCallback<LoginResult>{
     override fun onSuccess(loginResult: LoginResult) {
         Log.e("Callback :: ", "onSuccess")
         requestMe(loginResult.accessToken)
+        Log.e("Callback :: ", "requestME whererere")
 
     }
 
@@ -40,7 +33,8 @@ class LoginCallback : FacebookCallback<LoginResult>{
     }
 
     // 사용자 정보 요청
-    private fun requestMe(token: AccessToken) {
+    private fun requestMe(token: AccessToken){
+
         val graphRequest = GraphRequest.newMeRequest(
             token
         ) { me, response ->
@@ -49,21 +43,6 @@ class LoginCallback : FacebookCallback<LoginResult>{
             } else {
                 Log.e("result>>>>>>>>>>>>>>>>>", me.toString())
             }
-
-            //제대로 들어왔는지 확인
-            val id = me.optString("id")
-//          val name = me.optString("name")
-
-            JSONTask(id).execute("http://192.249.19.254:8280/") //AsyncTask 시작시킴
-//
-//            Toast.makeText(
-//                getApplicationContext(),
-//
-//                "name: $name / id: $id",
-//
-//                Toast.LENGTH_LONG
-//            ).show()
-            // send email and id to your web server
         }
         val parameters = Bundle()
         parameters.putString("field", "id,name")
@@ -71,42 +50,6 @@ class LoginCallback : FacebookCallback<LoginResult>{
         graphRequest.executeAsync()
 
         parameters.keySet()
-
-
     }
 
-    class JSONTask(id: String) :
-        AsyncTask<String?, String?, String?>() {
-
-        val id = id
-
-        override fun doInBackground(vararg urls: String?): String? {
-            try {
-
-                var getContact =
-                    URL("http://192.249.19.254:8280/api/contacts/user_id/$id").readText() // 로그인한 유저가 받은 아이디로 찾기 //not found 일 때 처리
-
-                var json = getContact
-                var gson = Gson()
-                var person : List<Contact> = gson.fromJson(json, Array<Contact>::class.java).toList()
-
-                Log.i("Contact>>>>>>>>>>>>>>>>", person[0].get_id() )//형태>> [{"_id":"5e11cddde1fc032f3ba8e4c3","phNum":"010-121324-1124","name":"dafoudfasfi"}]
-
-//                var getImage =
-//                    URL("http://192.249.19.254:8280/api/images/user_id/$id").readText() // 로그인한 유저가 받은 아이디로 찾기 //not found 일 때 처리
-//                Log.i("Contact>>>>>>>>>>>>>>>>", getImage) //형태>> [{"_id":"5e11cddde1fc032f3ba8e4c3","phNum":"010-121324-1124","name":"dafoudfasfi"}]
-//
-//                var getTab3 =
-//                    URL("http://192.249.19.254:8280/api/contacts/user_id/$id").readText() // 로그인한 유저가 받은 아이디로 찾기 //not found 일 때 처리
-//                Log.i("Contact>>>>>>>>>>>>>>>>", getTab3) //형태>> [{"_id":"5e11cddde1fc032f3ba8e4c3","phNum":"010-121324-1124","name":"dafoudfasfi"}]
-
-                //parsing code 필요
-
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return null
-        }
-    }
 }

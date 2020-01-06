@@ -1,8 +1,8 @@
 package com.example.basictabkt
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
+
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
@@ -20,7 +20,6 @@ class MainActivity : AppCompatActivity() {
     private var mLoginCallback: LoginCallback? = null
     private var mCallbackManager: CallbackManager? = null
     private var btn_custom_login: Button? = null
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,10 +52,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        mCallbackManager!!.onActivityResult(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
+        mCallbackManager!!.onActivityResult(requestCode, resultCode, data)
 
-       if(resultCode == Activity.RESULT_OK) { // 제대로 로그인 됐을 때만 넘어가게
+       if(resultCode == RESULT_OK) { // 제대로 로그인 됐을 때만 넘어가게
            Toast.makeText(
                applicationContext,
                "환영합니다!",
@@ -64,7 +63,6 @@ class MainActivity : AppCompatActivity() {
            ).show()
 
            val intent = Intent(this, TabActivity::class.java)
-           //id
            startActivity(intent)
        }
     }

@@ -13,9 +13,10 @@ import android.util.Log
 import com.facebook.login.LoginManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import io.github.rybalkinsd.kohttp.dsl.httpDelete
-import io.github.rybalkinsd.kohttp.dsl.httpPost
-import io.github.rybalkinsd.kohttp.ext.url
+import com.example.basictabkt.login.Contact
+import com.facebook.AccessToken
+
+import com.google.gson.Gson
 import java.net.URL
 
 
@@ -25,6 +26,19 @@ class TabActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.tab_activity_main)
+
+        //Log.e("before22>>>>>>>>>>>>>>>", global_id)
+
+        val accessToken = AccessToken.getCurrentAccessToken()
+
+        val userId = accessToken.userId
+
+        //val userId : String = global_id
+
+        Log.e("after22>>>>>>>>>>>>>>>", userId)
+
+        Toast.makeText(this, "$userId", Toast.LENGTH_LONG).show()
+
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         val viewPager: ViewPager = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter
@@ -53,7 +67,7 @@ class TabActivity : AppCompatActivity(){
             builder.show()
         }
 
-
+        JSONTask(userId).execute("http://192.249.19.254:8280/") //AsyncTask 시작시킴
     }
 
     //뒤로가기 누를 시 앱 전체 꺼지게
@@ -63,6 +77,45 @@ class TabActivity : AppCompatActivity(){
         a.addCategory(Intent.CATEGORY_HOME)
         a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(a)
+    }
+
+    class JSONTask(id: String) :
+        AsyncTask<String?, String?, String?>() {
+
+        val user_id = id
+
+        //Log.i("Contact>>>>>>>>>>>>>>>>", user_id )
+
+        override fun doInBackground(vararg urls: String?): String? {
+            try {
+
+                var getContact =
+                    URL("http://192.249.19.254:8280/api/contacts/user_id/$user_id").readText() // 로그인한 유저가 받은 아이디로 찾기 //not found 일 때 처리
+
+                var json = getContact
+                var gson = Gson()
+                var person : List<Contact> = gson.fromJson(json, Array<Contact>::class.java).toList()
+
+                Log.i("Contact>>>>>>>>>>>>>>>>", person[0].get_id() )//형태>> [{"_id":"5e11cddde1fc032f3ba8e4c3","phNum":"010-121324-1124","name":"dafoudfasfi"}]
+
+
+
+//                var getImage =
+//                    URL("http://192.249.19.254:8280/api/images/user_id/$id").readText() // 로그인한 유저가 받은 아이디로 찾기 //not found 일 때 처리
+//                Log.i("Contact>>>>>>>>>>>>>>>>", getImage) //형태>> [{"_id":"5e11cddde1fc032f3ba8e4c3","phNum":"010-121324-1124","name":"dafoudfasfi"}]
+//
+//                var getTab3 =
+//                    URL("http://192.249.19.254:8280/api/contacts/user_id/$id").readText() // 로그인한 유저가 받은 아이디로 찾기 //not found 일 때 처리
+//                Log.i("Contact>>>>>>>>>>>>>>>>", getTab3) //형태>> [{"_id":"5e11cddde1fc032f3ba8e4c3","phNum":"010-121324-1124","name":"dafoudfasfi"}]
+
+                //parsing code 필요
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
     }
 
 }

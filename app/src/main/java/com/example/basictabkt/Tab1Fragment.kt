@@ -233,6 +233,8 @@ class Tab1Fragment : Fragment() {
     }
 
     companion object {
+        lateinit var id: String
+
         internal val CONTACTS_PERMISSION = 1
 
         fun context(activity: Activity?) : Context {
