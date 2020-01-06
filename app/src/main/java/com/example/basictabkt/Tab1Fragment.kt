@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.basictabkt.login.Contact
 import com.facebook.AccessToken
 import com.google.gson.Gson
+import io.github.rybalkinsd.kohttp.dsl.httpDelete
 import io.github.rybalkinsd.kohttp.dsl.httpPost
 import io.github.rybalkinsd.kohttp.ext.url
 import java.io.Serializable
@@ -93,7 +94,7 @@ class Tab1Fragment : Fragment() {
                     val user_Name = cursor.getString(1)
                     val real_id = cursor.getString(cursor.getColumnIndex("_id"))
 
-                    JSONTask_ph(userId, user_Name, user_phNumber, real_id).execute()
+                    JSONTaskPost(userId, user_Name, user_phNumber, real_id).execute("http://192.249.19.254:8280/")
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     hashlist.add(contactItem)
 
@@ -111,6 +112,7 @@ class Tab1Fragment : Fragment() {
         }
 
     private var mArrayList: List<Contact>? = null
+    private var mArrayList3: List<Contact>? = null
     private var mArrayList2: ArrayList<ContactItem>? = null
     private var mAdapter: CustomAdapter? = null
     private var count = -1
@@ -202,8 +204,34 @@ class Tab1Fragment : Fragment() {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         mArrayList2 = contactList
 
+        //get
+        JSONTaskGet(userId).execute("http://192.249.19.254:8280/") //AsyncTask 시작시킴
 
-        JSONTask(userId).execute("http://192.249.19.254:8280/") //AsyncTask 시작시킴
+        // 추가하기 버튼!
+        val post_btn = view.findViewById(R.id.post_btn) as Button
+        post_btn.setOnClickListener{
+            val builder2 = AlertDialog.Builder(context)
+            val inflater = layoutInflater
+            builder2.setTitle("연락처 추가")
+            val dialogLayout = inflater.inflate(R.layout.alert_dialog_with_edittext, null)
+            val name  = dialogLayout.findViewById(R.id.editText_name) as EditText
+            val phNum  = dialogLayout.findViewById(R.id.editText_phN) as EditText
+            builder2.setView(dialogLayout)
+            builder2.setPositiveButton("확인") { dialogInterface, i ->
+                val user_Name = name.text.toString()
+                val user_phNumber = phNum.text.toString()
+
+                Toast.makeText(context, "name, phNum: $user_Name , $user_phNumber", Toast.LENGTH_LONG).show()
+
+                JSONTaskPost2(userId, user_Name, user_phNumber).execute("http://192.249.19.254:8280/")
+                JSONTaskGet(userId).execute("http://192.249.19.254:8280/") //AsyncTask 시작시킴
+            }
+            builder2.setNegativeButton("취소"){ dialogInterface, i ->
+
+            }
+            builder2.show()
+        }
+
 
         // 불러오기 버튼!
         val get_btn = view.findViewById(R.id.get_btn) as Button
@@ -216,12 +244,14 @@ class Tab1Fragment : Fragment() {
                     val builder = AlertDialog.Builder(context)
                     builder.setTitle("연락처 삭제")
                     builder.setMessage("정말 삭제하시겠습니까?")
+                  //  Log.i("before delete1>>>>>>>>>", global_person_list[0].get_id())
                     val dialog_listener = object : DialogInterface.OnClickListener {
                         override fun onClick(dialog: DialogInterface?, which: Int) {
                             when (which) {
                                 DialogInterface.BUTTON_POSITIVE -> {
                                     //context(activityInstance), activityInstance!!, activityInstance!!.applicationContext, context!!, context!!.applicationContext, contextWrapper.baseContext, contextWrapper.baseContext.applicationContext
                                     val mContext = contextWrapper.baseContext.applicationContext
+                                  //  Log.i("before delete2>>>>>>>>>", global_person_list[0].get_id())
                                     val cur = mContext.contentResolver.query(
                                         ContactsContract.Contacts.CONTENT_URI,
                                         null,
@@ -232,17 +262,25 @@ class Tab1Fragment : Fragment() {
                                     var count = 0
                                     if (cur!!.moveToFirst()) {
                                         do {
+                                           // Log.i("before delete3>>>>>>>>>", global_person_list[0].get_id())
                                             if (position == count) {
                                                 val lookupKey =
                                                     cur.getString(cur.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY))
+                                              //  Log.i("before delete4>>>>>>>>>", global_person_list[0].get_id())
                                                 val uri = Uri.withAppendedPath(
                                                     ContactsContract.Contacts.CONTENT_LOOKUP_URI,
                                                     lookupKey
                                                 )
                                                 mContext.contentResolver.delete(uri, null, null)
-                                                mArrayList = global_person_list
+                                                mArrayList3 = global_person_list
+
+                                              //  Log.i("before delete5>>>>>>>>>", global_person_list[0].get_id())
+
+                                                JSONTaskDel(global_person_list[position].get_id()).execute("http://192.249.19.254:8280/")
+                                                JSONTaskGet(userId).execute("http://192.249.19.254:8280/") //AsyncTask 시작시킴
+
                                                 val longClick = mAdapter!!.itemLongClick
-                                                mAdapter = CustomAdapter(contactList, mArrayList, context!!)
+                                                mAdapter = CustomAdapter(mArrayList2, mArrayList3, context!!)
                                                 mAdapter!!.itemLongClick = longClick
                                                 mRecyclerView.adapter = mAdapter
                                                 break
@@ -269,11 +307,6 @@ class Tab1Fragment : Fragment() {
             )
             mRecyclerView.addItemDecoration(dividerItemDecoration)
         }
-
-        val post_btn = view.findViewById(R.id.post_btn) as Button
-        get_btn.setOnClickListener{
-
-        }
         return view
 
     }
@@ -296,7 +329,7 @@ class Tab1Fragment : Fragment() {
     }
 
 
-    class JSONTask(id: String) :
+    class JSONTaskGet(id: String) :
         AsyncTask<String?, String?, String?>() {
 
         private val user_id = id
@@ -321,7 +354,7 @@ class Tab1Fragment : Fragment() {
         }
     }
 
-    class JSONTask_ph(userId: String, user_Name: String, user_phNumber: String, real_id: String):
+    class JSONTaskPost(userId: String, user_Name: String, user_phNumber: String, real_id: String):
         AsyncTask<String?, String?, String?>() {
 
         private val user_id = userId
@@ -343,6 +376,54 @@ class Tab1Fragment : Fragment() {
                     }
                 }
                 Log.i("post>>>>>>>>>>>>>>>>>>", post.message())
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+    }
+
+    class JSONTaskPost2(userId: String, user_Name: String, user_phNumber: String):
+        AsyncTask<String?, String?, String?>() {
+
+        private val user_id = userId
+        private val user_name = user_Name
+        private val user_phNumber = user_phNumber
+
+        override fun doInBackground(vararg urls: String?): String? {
+            try {
+                //post
+                var post = httpPost {
+                    url("http://192.249.19.254:8280/api/contacts")
+                    body {
+                        form("user_id=$user_id&" +
+                                "phNum=$user_phNumber&" +
+                                "name=$user_name&"
+                        )
+                    }
+                }
+                Log.i("post>>>>>>>>>>>>>>>>>>", post.message())
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+    }
+
+    class JSONTaskDel(_id: String?):
+        AsyncTask<String?, String?, String?>() {
+
+        private val id = _id
+
+        override fun doInBackground(vararg urls: String?): String? {
+            try {
+                //delete
+                var delete = httpDelete {
+                    url("http://192.249.19.254:8280/api/contacts/delete/$id")
+                }
+                Log.i("delete>>>>>>>>>>>>>>>>", delete.message())
 
             } catch (e: Exception) {
                 e.printStackTrace()
