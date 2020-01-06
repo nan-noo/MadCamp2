@@ -204,16 +204,13 @@ class Tab1Fragment : Fragment() {
 
 
         JSONTask(userId).execute("http://192.249.19.254:8280/") //AsyncTask 시작시킴
+
         // 불러오기 버튼!
         val get_btn = view.findViewById(R.id.get_btn) as Button
         get_btn.setOnClickListener {
 
             mArrayList = global_person_list
             mAdapter = CustomAdapter(mArrayList2, mArrayList, context!!)
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             mAdapter!!.itemLongClick = object : CustomAdapter.ItemLongClick {
                 override fun onLongClick(view: View, position: Int) {
                     val builder = AlertDialog.Builder(context)
@@ -271,6 +268,11 @@ class Tab1Fragment : Fragment() {
                 mLinearLayoutManager.orientation
             )
             mRecyclerView.addItemDecoration(dividerItemDecoration)
+        }
+
+        val post_btn = view.findViewById(R.id.get_btn) as Button
+        get_btn.setOnClickListener{
+
         }
         return view
 
