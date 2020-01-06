@@ -37,6 +37,13 @@ class Tab2Fragment : Fragment(), GalleryImageClickListener {
         // load images
         loadImages()
 
+        //post
+
+        //get
+
+        //delete
+
+
         return view
     } // end of onCreate
 
