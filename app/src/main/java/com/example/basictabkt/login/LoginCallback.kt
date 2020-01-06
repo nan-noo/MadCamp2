@@ -10,6 +10,7 @@ import com.facebook.login.LoginResult
 import android.widget.Toast
 import com.facebook.FacebookSdk.getApplicationContext
 import com.facebook.GraphRequest
+import com.google.gson.Gson
 import io.github.rybalkinsd.kohttp.dsl.httpDelete
 import io.github.rybalkinsd.kohttp.dsl.httpPost
 import io.github.rybalkinsd.kohttp.ext.url
@@ -84,7 +85,12 @@ class LoginCallback : FacebookCallback<LoginResult>{
 
                 var getContact =
                     URL("http://192.249.19.254:8280/api/contacts/user_id/$id").readText() // 로그인한 유저가 받은 아이디로 찾기 //not found 일 때 처리
-                Log.i("Contact>>>>>>>>>>>>>>>>", getContact) //형태>> [{"_id":"5e11cddde1fc032f3ba8e4c3","phNum":"010-121324-1124","name":"dafoudfasfi"}]
+
+                var json = getContact
+                var gson = Gson()
+                var person : List<Contact> = gson.fromJson(json, Array<Contact>::class.java).toList()
+
+                Log.i("Contact>>>>>>>>>>>>>>>>", person[0].get_id() )//형태>> [{"_id":"5e11cddde1fc032f3ba8e4c3","phNum":"010-121324-1124","name":"dafoudfasfi"}]
 
 //                var getImage =
 //                    URL("http://192.249.19.254:8280/api/images/user_id/$id").readText() // 로그인한 유저가 받은 아이디로 찾기 //not found 일 때 처리

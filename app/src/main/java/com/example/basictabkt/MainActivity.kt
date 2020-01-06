@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
            ).show()
 
            val intent = Intent(this, TabActivity::class.java)
+           //id
            startActivity(intent)
        }
     }
