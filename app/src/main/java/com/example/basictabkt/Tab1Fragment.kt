@@ -112,7 +112,7 @@ class Tab1Fragment : Fragment() {
         val permissionCheckW = ContextCompat.checkSelfPermission(context!!, android.Manifest.permission.WRITE_CONTACTS)
         val view = inflater.inflate(R.layout.fragment_tab1, container, false)
 
-
+        //
 
         //MainActivity 돌아올때마다 메세지 나옴
         if (permissionCheckR == PackageManager.PERMISSION_GRANTED) {

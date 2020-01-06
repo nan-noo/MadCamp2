@@ -8,9 +8,15 @@ import com.example.basictabkt.ui.main.SectionsPagerAdapter
 import com.google.android.material.tabs.TabLayout
 
 import android.content.Intent
+import android.os.AsyncTask
+import android.util.Log
 import com.facebook.login.LoginManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import io.github.rybalkinsd.kohttp.dsl.httpDelete
+import io.github.rybalkinsd.kohttp.dsl.httpPost
+import io.github.rybalkinsd.kohttp.ext.url
+import java.net.URL
 
 
 class TabActivity : AppCompatActivity(){
@@ -46,6 +52,8 @@ class TabActivity : AppCompatActivity(){
             }
             builder.show()
         }
+
+
     }
 
     //뒤로가기 누를 시 앱 전체 꺼지게
@@ -56,4 +64,5 @@ class TabActivity : AppCompatActivity(){
         a.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(a)
     }
+
 }
