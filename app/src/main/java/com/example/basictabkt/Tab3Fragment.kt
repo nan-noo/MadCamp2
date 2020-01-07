@@ -23,6 +23,10 @@ import android.widget.EditText
 import com.example.basictabkt.adapter.ListAdapter
 import java.text.SimpleDateFormat
 import com.example.basictabkt.helper.ItemData
+import android.widget.Toast
+import android.widget.AdapterView
+
+
 
 
 class Tab3Fragment : Fragment() {
@@ -98,23 +102,25 @@ class Tab3Fragment : Fragment() {
 
 
 
+
         //삭제하기
         val listview = view.findViewById(R.id.listView) as ListView
+
         listview.setOnItemLongClickListener {  parent, v, position, arg3 ->
             //Toast.makeText(context,"hello", Toast.LENGTH_LONG).show()
             val builder = AlertDialog.Builder(context)
             builder.setTitle("일정 삭제")
             builder.setMessage("정말 삭제하시겠습니까?")
             builder.setPositiveButton("확인") { dialogInterface, i ->
-
-                
+                val _id = global_todo_list[position].get_id()
+                JSONTaskDel(_id).execute("http://192.249.19.254:8280/")
+                JSONTaskGet(userId).execute("http://192.249.19.254:8280/")
             }
             builder.setNegativeButton("취소"){ dialogInterface, i ->
-
             }
             builder.show()
 
-            false
+            true
         }
 
 
@@ -140,21 +146,21 @@ class Tab3Fragment : Fragment() {
                 oItem.strDate = "$year/$month/$day"
                 oData.add(oItem)
 
+                var tv = view.findViewById(R.id.textView4) as TextView
                 if("$year/$month/$day" == date_text){
-                    var tv = view.findViewById(R.id.textView4) as TextView
                     tv.text = "$toDo"
                 }
-
+                else{
+                    tv.text = "없음!"
+                }
                 i++
             }
 
-
-            m_oListView = view.findViewById(R.id.listView) as ListView
-            val oAdapter = ListAdapter(oData)
-            m_oListView!!.adapter = oAdapter
+        m_oListView = view.findViewById(R.id.listView) as ListView
+        val oAdapter = ListAdapter(oData)
+        m_oListView!!.adapter = oAdapter
 
         }
-
 
         return view
     }
