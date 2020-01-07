@@ -100,9 +100,6 @@ class Tab3Fragment : Fragment() {
             builder2.show()
         }
 
-
-
-
         //삭제하기
         val listview = view.findViewById(R.id.listView) as ListView
 
@@ -135,6 +132,9 @@ class Tab3Fragment : Fragment() {
             val date_text =
                 SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(currentTime)
 
+            var tv = view.findViewById(R.id.textView4) as TextView
+            tv.text = "없음!"
+
             while(i < num){
                 val year = global_todo_list[i].get_year()
                 val month = global_todo_list[i].get_month()
@@ -146,12 +146,9 @@ class Tab3Fragment : Fragment() {
                 oItem.strDate = "$year/$month/$day"
                 oData.add(oItem)
 
-                var tv = view.findViewById(R.id.textView4) as TextView
+
                 if("$year/$month/$day" == date_text){
                     tv.text = "$toDo"
-                }
-                else{
-                    tv.text = "없음!"
                 }
                 i++
             }
