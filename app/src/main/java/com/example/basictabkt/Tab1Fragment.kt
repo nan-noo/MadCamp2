@@ -34,6 +34,7 @@ import java.util.LinkedHashSet
 
 class Tab1Fragment : Fragment() {
 
+    //Facebook ID
     val accessToken = AccessToken.getCurrentAccessToken()
     val userId = accessToken.userId
 
@@ -94,6 +95,7 @@ class Tab1Fragment : Fragment() {
                     val user_Name = cursor.getString(1)
                     val real_id = cursor.getString(cursor.getColumnIndex("_id"))
 
+                    //폰 연락처 post
                     JSONTaskPost(userId, user_Name, user_phNumber, real_id).execute("http://192.249.19.254:8280/")
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     hashlist.add(contactItem)
@@ -221,7 +223,7 @@ class Tab1Fragment : Fragment() {
                 val user_Name = name.text.toString()
                 val user_phNumber = phNum.text.toString()
 
-                Toast.makeText(context, "name, phNum: $user_Name , $user_phNumber", Toast.LENGTH_LONG).show()
+                //Toast.makeText(context, "name, phNum: $user_Name , $user_phNumber", Toast.LENGTH_LONG).show()
 
                 JSONTaskPost2(userId, user_Name, user_phNumber).execute("http://192.249.19.254:8280/")
                 JSONTaskGet(userId).execute("http://192.249.19.254:8280/") //AsyncTask 시작시킴

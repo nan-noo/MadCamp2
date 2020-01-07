@@ -14,6 +14,13 @@ class Contact {
     @SerializedName("name")
     @Expose
     private var name: String? = null
+    @SerializedName("image_url")
+    @Expose
+    private var image_url: String? = null
+    @SerializedName("image_title")
+    @Expose
+    private var image_title: String? = null
+
     /* 중략... */
     fun get_id(): String? {
         return _id
@@ -32,5 +39,13 @@ class Contact {
     }
     fun set_name(name: String) {
         this.name = name
+    }
+
+    fun get_url(): String? {
+        return image_url
+    }
+
+    fun get_title(): String? {
+        return image_title
     }
 }
