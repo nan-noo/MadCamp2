@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -7,87 +8,38 @@
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity">
-    <LinearLayout
+
+
+    <ListView
+        android:id="@+id/recList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        tools:ignore="MissingConstraints" />
 
-        <FrameLayout
-            android:layout_width="310dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="120dp">
+    <Button
+        android:id="@+id/get_btn3"
+        android:layout_width="68dp"
+        android:layout_height="39dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/selector_view"
+        android:text="불러오기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
 
-            <TextView
-                android:id="@+id/minsec"
-                android:layout_width="310dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
-                android:background="#282828"
-                android:gravity="center"
-                android:text="00:00"
-                android:textColor="#FFFFFF"
-                android:textSize="75sp" />
+    <Button
+        android:id="@+id/post_btn3"
+        android:layout_width="68dp"
+        android:layout_height="39dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginLeft="112dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/selector_view"
+        android:text="추가하기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
 
-            <TextView
-                android:id="@+id/milliseconds"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="bottom|right"
-                android:layout_marginBottom="18sp"
-                android:text=".00"
-                android:textColor="#FFFFFF"
-                android:textSize="25sp" />
-
-        </FrameLayout>
-
-        <ListView
-            android:id="@+id/recList"
-            android:layout_width="match_parent"
-            android:layout_height="127dp"
-            android:layout_marginTop="12dp"
-            android:visibility="gone" />
-
-        <FrameLayout
-            android:id="@+id/linButtons"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginRight="102dp"
-                android:background="@drawable/selector_view"
-                android:onClick="start"
-                android:text="Start"
-                tools:ignore="OnClick" />
-
-            <Button
-                android:id="@+id/record"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/selector_view"
-                android:onClick="record"
-                android:text="Record"
-                tools:ignore="OnClick" />
-
-            <Button
-                android:id="@+id/reset"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="102dp"
-                android:background="@drawable/selector_view"
-                android:onClick="reset"
-                android:text="Reset"
-                tools:ignore="OnClick" />
-
-        </FrameLayout>
-
-    </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

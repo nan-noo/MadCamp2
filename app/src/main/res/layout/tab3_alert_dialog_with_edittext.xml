@@ -5,15 +5,15 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/editText_name"
+        android:id="@+id/Date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="이름"/>
+        android:hint="날짜"/>
 
     <EditText
-        android:id="@+id/editText_phN"
+        android:id="@+id/ToDo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="전화번호"/>
+        android:hint="일정"/>
 
 </LinearLayout>

@@ -1,136 +1,211 @@
 package com.example.basictabkt
 
-import android.os.Build
-import android.os.Build.VERSION_CODES.M
+import android.app.AlertDialog
+import android.os.AsyncTask
 import android.os.Bundle
-import android.os.Handler
-import android.os.SystemClock
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.annotation.RequiresApi
-import androidx.core.os.postDelayed
-import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_tab3.*
+import com.example.basictabkt.login.Contact
+import com.facebook.AccessToken
+import com.google.gson.Gson
+import io.github.rybalkinsd.kohttp.dsl.httpDelete
+import io.github.rybalkinsd.kohttp.dsl.httpPost
+import io.github.rybalkinsd.kohttp.ext.url
+import java.net.URL
+import android.widget.Toast
+import android.app.DatePickerDialog
+import java.util.*
+import kotlin.collections.ArrayList
+import android.widget.EditText
+import java.text.SimpleDateFormat
 
 
 class Tab3Fragment : Fragment() {
-//    private var chronometer: Chronometer? = null
-    private var pauseOffset: Long = 0
-    private var running: Boolean = false
+    //Facebook ID
+    val accessToken = AccessToken.getCurrentAccessToken()
+    val userId = accessToken.userId
 
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_tab3, container, false)
-        val milli = view.findViewById<TextView>(R.id.milliseconds)
-        val minsec = view.findViewById<TextView>(R.id.minsec)
-        val handler = Handler()
-        var startTime:Long = 0
-        var passedTime:Long = 0
-        var timeBuff:Long = 0
         var elementsArray:ArrayList<String> = arrayListOf()
-        val adapter = ArrayAdapter<String>(context!!, android.R.layout.simple_list_item_1, elementsArray)
+        val adapter = ArrayAdapter<String>(context!!, android.R.layout.simple_list_item_1, elementsArray) // list layout custom 하기
         val listView = view.findViewById(R.id.recList) as ListView
-        val linButtonView = view.findViewById(R.id.linButtons) as ViewGroup
-        val autoTransition = AutoTransition()
         listView.adapter = adapter
 
-        var runnable: Runnable? = null
-        runnable = Runnable {
-            if (running) {
-//                val millisecondsTime = SystemClock.elapsedRealtime() - chronometer!!.base
+        // 불러오기
+        JSONTaskGet(userId).execute("http://192.249.19.254:8280/")
 
-                passedTime = SystemClock.elapsedRealtime() - startTime
-                val updateTime = timeBuff + passedTime
-                val milliseconds = (updateTime % 1000).toInt() / 10
-                var seconds = (updateTime / 1000).toInt()
-                val minutes = seconds / 60
-                seconds = seconds % 60
 
-                milli.text = String.format(".%02d", milliseconds)
-                minsec.text = String.format("%02d:%02d", minutes, seconds)
-                handler.postDelayed(runnable!!, 0)
+        // 일정 추가
+        val post_btn = view.findViewById(R.id.post_btn3) as Button
+        post_btn.setOnClickListener {
+            val builder2 = AlertDialog.Builder(context)
+            val inflater = layoutInflater
+            val dialogLayout = inflater.inflate(R.layout.tab3_alert_dialog_with_edittext, null)
+            var myCalendar = Calendar.getInstance()
+
+            var myDatePicker: DatePickerDialog.OnDateSetListener =
+                DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                    myCalendar.set(Calendar.YEAR, year)
+                    myCalendar.set(Calendar.MONTH, month)
+                    myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                    val myFormat = "yyyy/MM/dd"    // 출력형식   2018/11/28
+                    val sdf = SimpleDateFormat(myFormat, Locale.KOREA)
+
+                    val get_date = dialogLayout.findViewById(R.id.Date) as EditText
+                    get_date.setText(sdf.format(myCalendar.time))
+                }
+
+            val get_Date = dialogLayout.findViewById(R.id.Date) as EditText
+            val get_toDo = dialogLayout.findViewById(R.id.ToDo) as EditText
+
+            get_Date.setOnClickListener {
+                DatePickerDialog(
+                    context!!,
+                    myDatePicker,
+                    myCalendar.get(Calendar.YEAR),
+                    myCalendar.get(Calendar.MONTH),
+                    myCalendar.get(Calendar.DAY_OF_MONTH)
+                ).show()
             }
-        }
 
-        val button1 = view.findViewById(R.id.start) as Button
-        button1.setOnClickListener {
-            if (!running) {
-//                chronometer!!.base = SystemClock.elapsedRealtime() - pauseOffset
-//                chronometer!!.start()
+            builder2.setTitle("To Do!")
+            builder2.setView(dialogLayout)
+            builder2.setPositiveButton("확인") { dialogInterface, i ->
+                val date = get_Date.text.toString()
+                val toDo = get_toDo.text.toString()
 
-                startTime = SystemClock.elapsedRealtime()
-                handler.postDelayed(runnable, 0)
-                button1.setText("Pause")
-                running = true
+                val str = date.split("/")
+                val year = str[0]
+                val month = str[1]
+                val day = str[2]
 
-            } else{
-//                chronometer!!.stop()
-//                pauseOffset = SystemClock.elapsedRealtime() - chronometer!!.base
+                //Toast.makeText(context, "string 어떻게? $date, $year, $month, $day", Toast.LENGTH_LONG).show() //2020/10/80
 
-                timeBuff += passedTime
-                handler.removeCallbacks(runnable)
-                button1.setText("Start")
-                running = false
+                JSONTaskPost(userId, year, month, day, toDo).execute("http://192.249.19.254:8280/")
+                JSONTaskGet(userId).execute("http://192.249.19.254:8280/")
             }
+            builder2.setNegativeButton("취소"){ dialogInterface, i ->
+            }
+            builder2.show()
+
+//        val del_btn = view.findViewById(R.id.reset) as Button
+//        del_btn.setOnClickListener {
+//
+//        }
         }
 
-        val button2 = view.findViewById(R.id.record) as Button
-        button2.setOnClickListener{
-            elementsArray.add(String.format("%s%s", minsec.text, milli.text))
-            adapter.notifyDataSetChanged()
-            autoTransition.duration = 200
-            TransitionManager.beginDelayedTransition(listView)
-            TransitionManager.beginDelayedTransition(linButtonView, autoTransition)
-            listView.visibility = View.VISIBLE
-        }
+        val get_btn = view.findViewById(R.id.get_btn3) as Button
+        get_btn.setOnClickListener {
+            val num = global_todo_list.size
+            var i = 0
 
-        val button3 = view.findViewById(R.id.reset) as Button
-        button3.setOnClickListener {
+            elementsArray.clear() // list 초기화
 
-            startTime = 0
-            timeBuff = 0
-            passedTime = 0
-            if (running) {
-//                chronometer!!.stop()
-//                chronometer!!.base = SystemClock.elapsedRealtime()
-                pauseOffset = 0
+            while(i < num){
+                val year = global_todo_list[i].get_year()
+                val month = global_todo_list[i].get_month()
+                val day = global_todo_list[i].get_day()
+                val toDo = global_todo_list[i].get_toDo()
 
-                minsec.text = "00:00"
-                milli.text = ".00"
-                button1.setText("Start")
-                elementsArray.clear()
+                elementsArray.add(String.format("   %s/%s/%s  |  %s", year, month, day, toDo))
                 adapter.notifyDataSetChanged()
-                autoTransition.duration = 100
-                TransitionManager.beginDelayedTransition(listView, autoTransition)
-                TransitionManager.beginDelayedTransition(linButtonView)
-                listView.visibility = View.GONE
-                running = false
-            }
-            else{
-//                chronometer!!.base = SystemClock.elapsedRealtime()
-                pauseOffset = 0
-                minsec.text = "00:00"
-                milli.text = ".00"
-                elementsArray.clear()
-                adapter.notifyDataSetChanged()
-                autoTransition.duration = 100
-                TransitionManager.beginDelayedTransition(listView, autoTransition)
-                TransitionManager.beginDelayedTransition(linButtonView)
-                listView.visibility = View.GONE
+
+                i++
             }
         }
-
 
         return view
+    }
+
+    class JSONTaskPost(userId: String, year: String, month: String, day: String, toDo: String):
+        AsyncTask<String?, String?, String?>() {
+
+        private val user_id = userId
+        private val year = year
+        private val month = month
+        private val day = day
+        private val toDo = toDo
+
+        override fun doInBackground(vararg urls: String?): String? {
+            try {
+                //post
+                var post = httpPost {
+                    url("http://192.249.19.254:8280/api/todos")
+                    body {
+                        form("user_id=$user_id&" +
+                                "year=$year&" +
+                                "month=$month&" +
+                                "day=$day&" +
+                                "toDo=$toDo"
+                        )
+                    }
+                }
+                Log.i("postTodo>>>>>>>>>>>>>", post.message())
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+    }
+
+    class JSONTaskGet(id: String) :
+        AsyncTask<String?, String?, String?>() {
+
+        private val user_id = id
+
+        override fun doInBackground(vararg urls: String?): String? {
+            try {
+
+                var getTodo =
+                    URL("http://192.249.19.254:8280/api/todos/after/user_id/$user_id").readText() // 로그인한 유저가 받은 아이디로 찾기 //not found 일 때 처리
+
+                var json = getTodo
+                var gson = Gson()
+                global_todo_list = gson.fromJson(json, Array<Contact>::class.java).toList()
+
+                Log.i("Todo>>>>>>>>>>>>>>>>", getTodo )//형태>> [{"_id":"5e11cddde1fc032f3ba8e4c3","user_id":"010-121324-1124","image_url":"dafoudfasfi", "image_title":"dfdfd"}]
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+    }
+
+    class JSONTaskDel(_id: String?):
+        AsyncTask<String?, String?, String?>() {
+
+        private val id = _id
+
+        override fun doInBackground(vararg urls: String?): String? {
+            try {
+                //delete
+                var delete = httpDelete {
+                    url("http://192.249.19.254:8280/api/todos/delete/$id")
+                }
+                Log.i("delete>>>>>>>>>>>>>>>>", delete.message())
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+    }
+
+    companion object{
+        lateinit var global_todo_list: List<Contact>
     }
 
 }// Required empty public constructor

@@ -2,7 +2,7 @@
     <string name="app_name">BasicTabKt</string>
     <string name="tab_text_1">Contact</string>
     <string name="tab_text_2">Gallery</string>
-    <string name="tab_text_3">Stop Watch</string>
+    <string name="tab_text_3">To Do</string>
 
     <string name="facebook_app_id">584240775703904</string>
     <string name="fb_login_protocol_scheme">fb584240775703904</string>
