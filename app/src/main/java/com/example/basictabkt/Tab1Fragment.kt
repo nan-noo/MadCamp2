@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.basictabkt.adapter.CustomAdapter
 import com.example.basictabkt.login.Contact
 import com.facebook.AccessToken
 import com.google.gson.Gson
@@ -240,7 +241,8 @@ class Tab1Fragment : Fragment() {
         get_btn.setOnClickListener {
 
             mArrayList = global_person_list
-            mAdapter = CustomAdapter(mArrayList2, mArrayList, context!!)
+            mAdapter =
+                CustomAdapter(mArrayList2, mArrayList, context!!)
             mAdapter!!.itemLongClick = object : CustomAdapter.ItemLongClick {
                 override fun onLongClick(view: View, position: Int) {
                     val builder = AlertDialog.Builder(context)
@@ -282,7 +284,12 @@ class Tab1Fragment : Fragment() {
                                                 JSONTaskGet(userId).execute("http://192.249.19.254:8280/") //AsyncTask 시작시킴
 
                                                 val longClick = mAdapter!!.itemLongClick
-                                                mAdapter = CustomAdapter(mArrayList2, mArrayList3, context!!)
+                                                mAdapter =
+                                                    CustomAdapter(
+                                                        mArrayList2,
+                                                        mArrayList3,
+                                                        context!!
+                                                    )
                                                 mAdapter!!.itemLongClick = longClick
                                                 mRecyclerView.adapter = mAdapter
                                                 break

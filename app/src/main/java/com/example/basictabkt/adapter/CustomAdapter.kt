@@ -1,13 +1,10 @@
-package com.example.basictabkt
+package com.example.basictabkt.adapter
 
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.OvalShape
-import android.os.Build
 import android.provider.ContactsContract
 import android.util.Log
 import android.util.TypedValue
@@ -18,6 +15,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.basictabkt.R
+import com.example.basictabkt.Tab1Fragment
 import com.example.basictabkt.login.Contact
 import java.util.*
 

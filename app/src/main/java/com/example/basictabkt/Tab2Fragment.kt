@@ -61,8 +61,6 @@ class Tab2Fragment : Fragment(), GalleryImageClickListener {
         }
 
         //delete
-
-
         return view
     } // end of onCreate
 

@@ -16,18 +16,20 @@ import io.github.rybalkinsd.kohttp.dsl.httpDelete
 import io.github.rybalkinsd.kohttp.dsl.httpPost
 import io.github.rybalkinsd.kohttp.ext.url
 import java.net.URL
-import android.widget.Toast
 import android.app.DatePickerDialog
 import java.util.*
 import kotlin.collections.ArrayList
 import android.widget.EditText
+import com.example.basictabkt.adapter.ListAdapter
 import java.text.SimpleDateFormat
+import com.example.basictabkt.helper.ItemData
 
 
 class Tab3Fragment : Fragment() {
     //Facebook ID
     val accessToken = AccessToken.getCurrentAccessToken()
     val userId = accessToken.userId
+    private var m_oListView: ListView? = null
 
 
     override fun onCreateView(
@@ -35,14 +37,9 @@ class Tab3Fragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_tab3, container, false)
-        var elementsArray:ArrayList<String> = arrayListOf()
-        val adapter = ArrayAdapter<String>(context!!, android.R.layout.simple_list_item_1, elementsArray) // list layout custom 하기
-        val listView = view.findViewById(R.id.recList) as ListView
-        listView.adapter = adapter
 
         // 불러오기
         JSONTaskGet(userId).execute("http://192.249.19.254:8280/")
-
 
         // 일정 추가
         val post_btn = view.findViewById(R.id.post_btn3) as Button
@@ -94,22 +91,43 @@ class Tab3Fragment : Fragment() {
                 JSONTaskPost(userId, year, month, day, toDo).execute("http://192.249.19.254:8280/")
                 JSONTaskGet(userId).execute("http://192.249.19.254:8280/")
             }
-            builder2.setNegativeButton("취소"){ dialogInterface, i ->
+            builder2.setNegativeButton("취소") { dialogInterface, i ->
             }
             builder2.show()
-
-//        val del_btn = view.findViewById(R.id.reset) as Button
-//        del_btn.setOnClickListener {
-//
-//        }
         }
 
+
+
+        //삭제하기
+        val listview = view.findViewById(R.id.listView) as ListView
+        listview.setOnItemLongClickListener {  parent, v, position, arg3 ->
+            //Toast.makeText(context,"hello", Toast.LENGTH_LONG).show()
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("일정 삭제")
+            builder.setMessage("정말 삭제하시겠습니까?")
+            builder.setPositiveButton("확인") { dialogInterface, i ->
+
+                
+            }
+            builder.setNegativeButton("취소"){ dialogInterface, i ->
+
+            }
+            builder.show()
+
+            false
+        }
+
+
+        // 불러오기 버튼
         val get_btn = view.findViewById(R.id.get_btn3) as Button
         get_btn.setOnClickListener {
             val num = global_todo_list.size
             var i = 0
+            val oData = ArrayList<ItemData>()
 
-            elementsArray.clear() // list 초기화
+            val currentTime = Calendar.getInstance().time
+            val date_text =
+                SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(currentTime)
 
             while(i < num){
                 val year = global_todo_list[i].get_year()
@@ -117,15 +135,30 @@ class Tab3Fragment : Fragment() {
                 val day = global_todo_list[i].get_day()
                 val toDo = global_todo_list[i].get_toDo()
 
-                elementsArray.add(String.format("   %s/%s/%s  |  %s", year, month, day, toDo))
-                adapter.notifyDataSetChanged()
+                val oItem = ItemData()
+                oItem.strTitle = "$toDo"
+                oItem.strDate = "$year/$month/$day"
+                oData.add(oItem)
+
+                if("$year/$month/$day" == date_text){
+                    var tv = view.findViewById(R.id.textView4) as TextView
+                    tv.text = "$toDo"
+                }
 
                 i++
             }
+
+
+            m_oListView = view.findViewById(R.id.listView) as ListView
+            val oAdapter = ListAdapter(oData)
+            m_oListView!!.adapter = oAdapter
+
         }
+
 
         return view
     }
+
 
     class JSONTaskPost(userId: String, year: String, month: String, day: String, toDo: String):
         AsyncTask<String?, String?, String?>() {
