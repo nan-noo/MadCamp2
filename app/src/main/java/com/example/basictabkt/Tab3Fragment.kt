@@ -135,6 +135,9 @@ class Tab3Fragment : Fragment() {
             var tv = view.findViewById(R.id.textView4) as TextView
             tv.text = "없음!"
 
+            var tv2 = view.findViewById(R.id.textView3) as TextView
+            tv2.text = "오늘 할일"
+
             while(i < num){
                 val year = global_todo_list[i].get_year()
                 val month = global_todo_list[i].get_month()
@@ -149,6 +152,7 @@ class Tab3Fragment : Fragment() {
 
                 if("$year/$month/$day" == date_text){
                     tv.text = "$toDo"
+                    tv2.text = date_text
                 }
                 i++
             }
