@@ -8,12 +8,16 @@
         android:id="@+id/Date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="날짜"/>
+        android:hint="날짜"
+        android:fontFamily="@font/bmjuattf"
+        />
 
     <EditText
         android:id="@+id/ToDo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="일정"/>
+        android:hint="일정"
+        android:fontFamily="@font/bmjuattf"
+        />
 
 </LinearLayout>

@@ -35,9 +35,12 @@
         android:layout_gravity="bottom|end"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
-        android:background="#3B5998"
+        android:background="@drawable/tab3button"
         android:foregroundGravity="center_vertical"
         android:text="Logout"
-        android:textColor="#FFFFFF" />
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/bmjuattf"
+        android:textSize="15sp"
+        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

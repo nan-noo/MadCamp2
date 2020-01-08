@@ -18,5 +18,7 @@
         android:padding="10dp"
         android:gravity="center"
         android:layout_alignParentBottom="true"
-        tools:text="Gallery Image Title"/>
+        tools:text="Gallery Image Title"
+        android:fontFamily="@font/bmjuattf"
+        />
 </RelativeLayout>
